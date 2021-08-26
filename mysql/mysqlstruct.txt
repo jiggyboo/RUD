@@ -1,0 +1,23 @@
+subs
+
++------------+--------------+------+-----+-------------------+----------------+
+| Field      | Type         | Null | Key | Default           | Extra          |
++------------+--------------+------+-----+-------------------+----------------+
+| id         | int(11)      | NO   | PRI | NULL              | auto_increment |
+| sub        | varchar(255) | NO   | UNI | NULL              |                |
+| created_at | timestamp    | NO   |     | CURRENT_TIMESTAMP |                |
++------------+--------------+------+-----+-------------------+----------------+
+
+urls
+
++------------+--------------+------+-----+-------------------+----------------+
+| Field      | Type         | Null | Key | Default           | Extra          |
++------------+--------------+------+-----+-------------------+----------------+
+| id         | int(11)      | NO   | PRI | NULL              | auto_increment |
+| urls       | varchar(255) | NO   |     | NULL              |                |
+| type       | varchar(255) | NO   |     | NULL              |                |
+| time       | varchar(255) | NO   |     | NULL              |                |
+| nump       | int(11)      | NO   |     | NULL              |                |
+| created_at | timestamp    | NO   |     | CURRENT_TIMESTAMP |                |
+| sub        | varchar(255) | NO   | MUL | NULL              |                |
++------------+--------------+------+-----+-------------------+----------------+

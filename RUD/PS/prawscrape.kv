@@ -1,0 +1,92 @@
+<MainCanvas>:
+
+    subreddit: subreddit
+    posNum: posNum
+    timeFilter: timeFilter
+
+    canvas.before:
+        Color:
+            rgba: (0, 0, 0, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    GridLayout:
+        cols:1
+        size: root.width - 20, root.height - 20
+        pos: 10, 10
+
+        Label:
+            size_hint_y: .4
+            text: "[b]PrawScrape[/b]"
+            font_size: '48sp'
+            markup: True
+            canvas.before:
+                Color:
+                    rgba: .5,.5,.5,1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            
+        GridLayout:
+            cols:3
+            size_hint_y: .3
+            
+            Label:
+                text: "Name of Subreddit"
+                text_size: self.size
+                padding: 5, 10
+                halign: 'left'
+                valign: 'bottom'
+                size_hint_y: .2
+
+            Label:
+                text: "# of Posts"
+                text_size: self.size
+                padding: 5, 10
+                halign: 'left'
+                valign: 'bottom'
+                size_hint_y: .2
+                
+            Label:
+                text: "Time Filter"
+                text_size: self.size
+                padding: 5, 10
+                halign: 'left'
+                valign: 'bottom'
+                size_hint_y: .2
+
+            TextInput:
+                id: subreddit
+                text: "Earthporn"
+                multiline: False
+                background_color: .5, .5, .5, 1
+                size_hint_y: .3
+
+            TextInput:
+                id: posNum
+                text: "30"
+                multiline: False
+                background_color: .5, .5, .5, 1
+                size_hint_y: .3
+
+            TextInput:
+                id: timeFilter
+                text: "month"
+                multiline: False
+                background_color: .5, .5, .5, 1
+                size_hint_y: .3
+
+        Button:
+            text: "Let's do it!"
+            on_press: root.cSC()
+            size_hint_y: .3
+        
+        ProgressBar:
+            id: pb
+            value: 0
+            min: 0
+            max: 100
+            size_hint_y: .2
+        
