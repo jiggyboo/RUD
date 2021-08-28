@@ -17,7 +17,90 @@ class CustomJSONEncoder(JSONEncoder):
 		
 		return JSONEncoder.default(self, obj)
 
+# # replaced by create_app
+# app = Flask(__name__)
+# app.id_count = 1
+# app.users = {}
+# app.tweets = []
+# app.json_encoder = CustomJSONEncoder # flask always has a jsonencoder
 
+# @app.route("/ping", methods=['GET'])
+# def ping():
+# 	return "pong"
+
+# @app.route("/sign-up", methods=['POST'])
+# def sign_up():
+# 	new_user = request.json
+# 	new_user["id"] = app.id_count
+# 	app.users[app.id_count] = new_user
+# 	app.id_count = app.id_count + 1
+
+# 	return jsonify(new_user)
+
+# @app.route("/tweet", methods=['POST'])
+# def tweet():
+# 	payload = request.json
+# 	user_id = int(payload["id"])
+# 	tweet = payload["tweet"]
+
+# 	if len(tweet) > 300:
+# 		return "More than 300 words", 400
+
+# 	if user_id not in app.users:
+# 		return "No such user", 400
+
+# 	app.tweets.append({
+# 		'user_id' : user_id,
+# 		'tweet' : tweet
+# 	})
+
+# 	return '', 200
+
+# @app.route("/follow", methods=['POST'])
+# def follow():
+# 	payload = request.json
+# 	user_id = int(payload["id"])
+# 	follow_id = int(payload["follow"])
+
+# 	if user_id not in app.users or follow_id not in app.users:
+# 		return "No such user", 400
+
+# 	user = app.users[user_id]
+# 	user.setdefault('follow',set()).add(follow_id)
+
+# 	return jsonify(user)
+
+# @app.route("/unfollow", methods=['POST'])
+# def unfollow():
+# 	payload = request.json
+# 	user_id = int(payload["id"])
+# 	unfollow_id = int(payload["unfollow"])
+
+# 	if user_id not in app.users or unfollow_id not in app.users:
+# 		return "No such user", 400
+
+# 	user = app.users[user_id]
+# 	user.setdefault('follow',set()).discard(unfollow_id)
+
+# 	return jsonify(user)
+
+# # decorator takes user_id from URI with <int:user_id> and passes it as timeline argument
+# @app.route("/timeline/<int:user_id>", methods=['GET'])
+# def timeline(user_id):
+# 	if user_id not in app.users:
+# 		return "No such user", 400
+	
+# 	follow_list = app.users[user_id].get('follow', set())
+# 	follow_list.add(user_id)
+# 	timeline = [tweet for tweet in app.tweets if tweet['user_id'] in follow_list]
+
+# 	return jsonify({
+# 		"user_id" : user_id,
+# 		"timeline" : timeline
+# 	})
+
+
+	
 def get_user(user_id):
 	user = current_app.database.execute(text("""
 		SELECT
@@ -324,6 +407,87 @@ def create_app(test_config = None):
 			'timeline' : get_timeline(user_id)
 		})
 
+	# @app.route("/sign-up", methods=['POST'])
+	# def sign_up():
+	# 	new_user = request.json
+	# 	new_user_id = app.database.execute(text("""
+	# 		INSERT INTO users	(
+	# 			name,
+	# 			email,
+	# 			profile,
+	# 			hashed_password
+	# 		)	VALUES	(
+	# 			:name,
+	# 			:email,
+	# 			:profile,
+	# 			:password
+	# 		)
+	# 	"""), new_user).lastrowid
+		
+	# 	row = app.database.execute(text("""
+	# 		SELECT
+	# 			id,
+	# 			name,
+	# 			email,
+	# 			profile
+	# 		FROM users
+	# 		WHERE id = :user_id
+	# 		"""), {
+	# 			'user_id' : new_user_id
+	# 		}).fetchone()
+
+	# 	created_user = {
+	# 			'id'	: row['id'],
+	# 			'name'	: row['name'],
+	# 			'email'	: row['email'],
+	# 			'profile'	: row['profile']
+	# 		} if row else None
+
+	# 	return jsonify(created_user)
+
+	# @app.route('/tweet', methods=['POST'])
+	# def tweet():
+	# 	user_tweet = request.json
+	# 	tweet = user_tweet['tweet']
+
+	# 	if len(tweet) > 300:
+	# 		return 'Length over 300', 400
+		
+	# 	app.database.execute(text("""
+	# 		INSERT INTO tweets (
+	# 			user_id,
+	# 			tweet
+	# 		) VALUES (
+	# 			:id,
+	# 			:tweet
+	# 		)
+	# 	"""), user_tweet)
+
+	# 	return '', 200
+
+	# @app.route('/timeline/<int:user_id>', methods=['GET'])
+	# def timeline(user_id):
+	# 	rows = app.database.execute(text("""
+	# 		SELECT
+	# 			t.user_id,
+	# 			t.tweet
+	# 		FROM tweets t
+	# 		LEFT JOIN users_follow_list ufl ON ufl.user_id = :user_id
+	# 		WHERE t.user_id = :user_id
+	# 		OR t.user_id = ufl.follow_user_id
+	# 	"""), {
+	# 		'user_id' : user_id
+	# 	}).fetchall()
+
+	# 	timeline = [{
+	# 		'user_id' : row['user_id'],
+	# 		'tweet' : row['tweet']
+	# 	} for row in rows]
+
+	# 	return jsonify({
+	# 		'user_id' : user_id,
+	# 		'timeline' : timeline
+	# 	})
 
 	return app
 
