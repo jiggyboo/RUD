@@ -8,6 +8,7 @@ import bcrypt
 import jwt
 import requests
 import praw
+from praw_info import prawInfo
 
 # Set cannot be jsonified. So have to use a custom json encoder.
 class CustomJSONEncoder(JSONEncoder):
@@ -17,103 +18,169 @@ class CustomJSONEncoder(JSONEncoder):
 		
 		return JSONEncoder.default(self, obj)
 
+###############################################################
+#                            MYSQL                            #
+###############################################################
 
-def get_user(user_id):
-	user = current_app.database.execute(text("""
+def getT_url(url):
+	rurl = current_app.database.execute(text("""
 		SELECT
-			id,
-			name,
-			email,
-			profile
-		FROM users
-		WHERE id = : user_id
+			id
+			urls
+		FROM urls
+		WHERE sub = : sub_name AND type = : url_type AND date = : url_date AND TIME = : url_dur
 		"""), {
-			'user_id' : user_id
+			'sub_name' : url['sub'],
+			'url_type' : url['stype'],
+			'url_date' : url['sdate'],
+			'url_dur' : url['sdur']
 		}).fetchone()
 
 	return {
-		'id' : user['id'],
-		'name' : user['name'],
-		'email' : user['email'],
-		'profile' : user['profile']
-	} if user else None
+		'id' : rurl['id'],
+		'sub' : url['sub'],
+		'urls' : rurl['urls']
+	} if rurl else None
 
-
-def insert_user(user):
-	return current_app.database.execute(text("""
-		INSERT INTO users (
-			name,
-			email,
-			profile,
-			hashed_password
-		) VALUES (
-			:name,
-			:email,
-			:profile,
-			:password
-		)
-	"""), user).lastrowid
-
-def insert_tweet(user_tweet):
-	return current_app.database.execute(text("""
-		INSERT INTO tweets (
-			user_id,
-			tweet
-		) VALUES(
-			:id,
-			:tweet
-		)
-	"""), user_tweet).rowcount
-
-def insert_follow(user_follow):
-	return current_app.database.execute(text("""
-		INSERT INTO user_follow_list (
-			user_id,
-			follow_user_id
-		) VALUES (
-			:id,
-			:follow
-		)
-	"""), user_follow).rowcount
-
-def insert_unfollow(user_unfollow):
-	return current_app.database.execute(text("""
-		DELETE FROM users_follow_list
-		WHERE user_id = :id
-		AND follow_user_id = :unfollow
-	"""), user_unfollow).rowcount
-
-def get_timeline(user_id):
-	timeline = current_app.database.execute(text("""
+def get_url(url):
+	rurl = current_app.database.execute(text("""
 		SELECT
-			t.user_id,
-			t.tweet
-		FROM tweets t
-		LEFT JOIN users_follow_list ufl ON ufl.user_id = :user_id
-		WHERE t.user_id= :user_id
-		OR t.user_id = ufl.follow_user_id
-	"""), {
-		'user_id' : user_id
-	}).fetchall()
-
-	return [{
-		'user_id' : tweet['user_id'],
-		'tweet' : tweet['tweet']
-	} for tweet in timeline]
-
-def get_user_id_and_password(email):
-	row = current_app.database.execute(text("""
-		SELECT
-			id,
-			hashed_password
-		FROM users
-		WHERE email =: email
-	"""), {'email': email}).fetchone()
+			id
+			urls
+		FROM urls
+		WHERE sub = : sub_name AND type = : url_type AND date = : url_date
+		"""), {
+			'sub_name' : url['sub'],
+			'url_type' : url['stype'],
+			'url_date' : url['sdate']
+		}).fetchone()
 
 	return {
-		'id' : row['id'],
-		'hashed_password' : row['hashed_password']
-	} if row else None
+		'id' : rurl['id'],
+		'sub' : url['sub'],
+		'urls' : rurl['urls']
+	} if rurl else None
+
+def get_sub(sub):
+	subn = current_app.database.execute(text("""
+	SELECT 
+		sub
+	FROM subs
+	WHERE sub = : sub_name
+	"""), sub).fetchone()
+	return subn
+
+def insert_url(url):
+	return current_app.database.execute(text("""
+		INSERT INTO urls (
+			urls,
+			type,
+			time,
+			nump,
+			sub
+		) VALUES (
+			:urls,
+			:type,
+			:time,
+			:nump,
+			:sub
+		)
+	"""), url).lastrowid
+
+def insert_sub(sub):
+	return current_app.database.execute(text("""
+		INSERT INTO subs (
+			sub,
+			nsfw
+		) VALUES (
+			:sub,
+			:nsfw
+		)
+	"""), sub).lastrowid
+
+def increment_hits_sub(subname):
+	current_app.database.execute(text("""
+	UPDATE subs
+		SET hits = hits + 1
+		WHERE sub = : subname
+	"""), {
+		'subname' : subname
+	})
+
+def increment_hits_url(id):
+	current_app.database.execute(text("""
+	UPDATE urls
+	SET hits = hits + 1
+	WHERE id = : sub_id
+	"""), {
+		'sub_id' : id
+	})
+
+## Searches Reddit using PRAW, returns urls of downloadable contents of each items in the sub.
+def search_sub(sub,tim,num,type):
+	urls = []
+	reddit = praw.Reddit(client_id=prawInfo['client_id'], \
+                     client_secret=prawInfo['client_secret'], \
+                     user_agent=prawInfo['user_agent'], \
+                     username=prawInfo['username'], \
+                     password=prawInfo['password'])
+	subred = reddit.subreddit(sub)
+	if type == 'top':
+		posts = subred.top(time_filter=tim, limit=num)
+	elif type == 'new':
+		posts = subred.new(limit = num)
+	elif type == 'hot':
+		posts = subred.hot(limit = num)
+	for post in posts:
+		try:
+			url = post.url
+			extens = url.split(".")[-1]
+			if extens == 'jpg' or extens == 'png':
+				urls.append(url)
+			elif extens == 'gifv':
+				urls.append(url)
+			elif url.split('/')[2] == 'redgifs.com':
+				try:
+					r = requests.get(url)
+					spl = r.text.split('/')
+					num = 88
+					for i in range(5):
+						if spl[num+i].rfind('.mp4') != -1:
+							mark = spl[num+i].split('"')[0]
+					url = 'https://thumbs2.redgifs.com/'+mark
+					urls.append(url)
+				except:
+					pass
+		except:
+			print("failed")
+			pass
+	return urls
+
+## Given the URL of Cyberdrop post, returns downloadable urls of each items in the gallery.
+def downloadCD(url):
+    r = requests.get(url).text
+    urls = []
+    pics = r.split('downloadUrl: "')
+    for durl in pics[1:]:
+        urls.append(durl.split('",\n')[0])
+    vids = r.split('mp4" data-html')
+    for vurl in vids[1:]:
+        vvurl = vurl.split('href="')[1]
+        url = vvurl.split('" target=')[0]
+        urls.append(url)
+    print(len(urls))
+
+    return jsonify({'urls':urls})
+
+def is_18(sub):
+	reddit = praw.Reddit(client_id=prawInfo['client_id'], \
+                     client_secret=prawInfo['client_secret'], \
+                     user_agent=prawInfo['user_agent'], \
+                     username=prawInfo['username'], \
+                     password=prawInfo['password'])
+	subred = reddit.subreddit(sub)
+	return subred.over18
+
 
 ###############################################################
 #					   	  Decorators                          #
@@ -166,52 +233,34 @@ def create_app(test_config = None):
 
 	app.json_encoder = CustomJSONEncoder
 
-	@app.route("/ping", methods=['GET'])
+	@app.route("/api/ping", methods=['GET'])
 	def ping():
 		return "pong"
 
-	@app.route('/sign-up', methods=['POST'])
-	def sign_up():
-		new_user = request.json
-		new_user['password'] = bcrypt.hashpw(
-			new_user['password'].encode('UTF-8'), bcrypt.gensalt()
-		)
-		new_user_id = insert_user(new_user)
-		new_user_info = get_user(new_user_id)
-
-		return jsonify(new_user_info)
-
-	@app.route('/login', methods=['POST'])
-	def login():
-		credential = request.json
-		email = credential['email']
-		password = credential['password']
-
-		row = database.execute(text("""
-			SELECT
-				id,
-				hashed_password
-			FROM users
-			WHERE email = :email
-		"""), {'email':email}).fetchone()
-
-		if row and bcrypt.checkpw(password.encode('UTF-8'), row['hashed_password'].encode('UTF-8')):
-			user_id = row['id']
-			payload = {
-				'user_id' : user_id,
-				'exp' : datetime.utcnow() + timedelta(seconds = 60*60*24)
-			}
-			token = jwt.encode(payload, app.config['JWT_SECRET_KEY'], 'HS256')
-
-			return jsonify({
-				'user_id' : user_id,
-				'access_token' : token
-				})
-		
+	@app.route('/api/search', methods=['GET'])
+	def search():
+		sub = request.args.get('sub')
+		num = int(request.args.get('num'))
+		tim = request.args.get('tim')
+		typ = request.args.get('typ')
+		dur = request.args.get('dur')
+		if dur != '':
+			url = get_url({''})
 		else:
-			return '', 401
-	
-	@app.route('/cors/<path:url>', methods=method_requests_mapping.keys())
+			url = getT_url({''})
+		if url == None:
+			if get_sub(sub) == None:
+				insert_sub(jsonify({'sub':sub,'nsfw':int(is_18(sub))}))
+			rurl = search_sub(sub, tim, num, typ)
+			insert_url(jsonify({'urls':rurl,'type':typ,'time':tim,'nump':num,'sub':sub}))
+		else:
+			rurl = url
+			increment_hits_sub(sub)
+			increment_hits_url(rurl['id'])
+
+		return jsonify({'url':rurl['urls']})
+
+	@app.route('/api/cors/<path:url>', methods=method_requests_mapping.keys())
 	def purl(url):
 		requests_function = method_requests_mapping[request.method]
 		req = requests_function(url, stream=True, params=request.args)
@@ -221,28 +270,27 @@ def create_app(test_config = None):
 		response.headers['Access-Control-Allow-Origin'] = '*'
 		return response
 
-	@app.route('/url', methods=['GET'])
+	@app.route('/api/url', methods=['GET'])
 	def url():
 		return jsonify({'url' : 'reddit.com', 'download' : 'downloadit'})
 
-	@app.route('/list', methods=['GET'])
+	@app.route('/api/list', methods=['GET'])
 	def liste():
 		return jsonify({'sub': 'subname', 'urls':'["https://i.redd.it/xiwx5di1h6i71.jpg","https://i.redd.it/enjfvmtll4i71.png"]'})
 
-	@app.route('/down', methods=['GET'])
+	@app.route('/api/down', methods=['GET'])
 	def down():
-		file = open("urls.txt","a")
 		sub = request.args.get('sub')
 		num = int(request.args.get('num'))
 		tim = request.args.get('tim')
 		typ = request.args.get('typ')
 		urls = []
 
-		reddit = praw.Reddit(client_id='z1eHTSoHlmqgkw', \
-                     client_secret='Y3g69V7w6_drdPkfiFenPWb6azh2tQ', \
-                     user_agent='stkRadar', \
-                     username='Great-Practice3637', \
-                     password='satrhdqn19')
+		reddit = praw.Reddit(client_id=prawInfo['client_id'], \
+			client_secret=prawInfo['client_secret'], \
+			user_agent=prawInfo['user_agent'], \
+			username=prawInfo['username'], \
+			password=prawInfo['password'])
 		subred = reddit.subreddit(sub)
 		print(sub,num,typ,tim)
 
@@ -250,8 +298,6 @@ def create_app(test_config = None):
 		for post in topPosts:
 			try:
 				url = post.url
-				file.write(url)
-				file.write(', ')
 				extens = url.split(".")[-1]
 				if extens == 'jpg' or extens == 'png':
 					urls.append(url)
@@ -272,58 +318,7 @@ def create_app(test_config = None):
 			except:
 				pass
 		print(len(urls))
-		file.close()
 		return jsonify(urls)
-	
-	@app.route('/tweet', methods=['POST'])
-	@login_required
-	def tweet():
-		new_tweet = request.json
-		new_tweet['id'] = g.user_id
-		tweet = new_tweet['tweet']
-
-		if len(tweet) > 300:
-			return "Over 300 letters", 400
-		
-		insert_tweet(new_tweet)
-
-		return '',200
-
-	@app.route('/follow', methods=['POST'])
-	@login_required
-	def follow():
-		payload = request.json
-		insert_follow(payload)
-
-		return '', 200
-
-	@app.route('/unfollow', methods=['POST'])
-	@login_required
-	def unfollow():
-		payload = request.json
-		insert_unfollow(payload)
-
-		return '', 200
-	
-	@app.route('/timeline/<int:user_id>', methods=['GET'])
-	@login_required
-	def timeline(user_id):
-		return jsonify({
-			'user_id' : user_id,
-			'tweet' : get_timeline(user_id)
-		})	
-
-
-	@app.route('/timeline',methods=['GET'])
-	@login_required
-	def user_timeline():
-		user_id = g.user_id
-
-		return jsonify({
-			'user_id' : user_id,
-			'timeline' : get_timeline(user_id)
-		})
-
 
 	return app
 

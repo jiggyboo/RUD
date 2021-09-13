@@ -1,4 +1,5 @@
-$(document).ready(function(){           
+$(document).ready(function(){
+    const urls = [];           
 
     document.getElementById("search").onclick = function() {
         var sre = document.getElementById("sresult");
@@ -56,6 +57,27 @@ $(document).ready(function(){
             .always(() => console.log('Download Done'));
     }
 
+    // document.getElementById("down").onclick = function() {
+    //     var red = $("#sub").val();
+    //     var typ = $("#type").val();
+    //     var tim = $("#time").val();
+    //     var num = $("#nump").val();
+    //     if (typ == 'top') {
+    //         var dData = {'sub':red,'typ':typ,'tim':tim,'num':num};
+    //     }
+    //     else {
+    //         var dData = {'sub':red,'typ':typ,'num':num};
+    //     }
+    //     $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/down', dData)
+    //         .done((data) => {
+    //             var urlList = [];
+    //             urlList = data;
+    //             console.log(data);
+    //             download_sub(red,urlList);
+    //         })
+    //         .fail((error) => console.error(error))
+    //         .aways(() => console.log('Download Tried'));
+    // }
     document.getElementById("down").onclick = function() {
         var red = $("#sub").val();
         var typ = $("#type").val();
@@ -67,15 +89,30 @@ $(document).ready(function(){
         else {
             var dData = {'sub':red,'typ':typ,'num':num};
         }
-        $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com:5000/down', dData)
+        $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/down', dData)
             .done((data) => {
                 var urlList = [];
                 urlList = data;
                 console.log(data);
-                download_sub(red,urlList);
+                var subinfo = [red, typ, tim, num]
+                var urlData = {'subinfo':subinfo, 'urllist':urlList}
+                urls.push(urlData)
+                $('#url-tab').append(
+                    '<div class="w3-card w3-container w3-gray w3-border" style="margin:5px" name="ubody">' +
+                    '<header class="w3-dark-gray">'+
+                        '<input type="checkbox" name="download" checked="checked" class="w3-check w3_black">'+
+                        red+' '+typ+' '+tim+' '+num+
+                    '</header>'+
+                    '</div>'
+                )
             })
             .fail((error) => console.error(error))
             .aways(() => console.log('Download Tried'));
+    }
+
+    document.getElementById('downUrl').onclick = function() {
+        var blob = new Blob([urls],{type:"text/plain;charset=utf-8"});
+        saveAs(blob, "urls.txt");
     }
 
     document.getElementById('select').onclick = function() {

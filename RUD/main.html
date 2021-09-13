@@ -9,14 +9,26 @@
     <script src="FileSaver.min.js"></script>
     <script src="download.js"></script>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <style>
+        .downloadbutton {
+            align-items: center;
+            padding: 8px;
+            position: fixed;
+            top: 730px;
+            right: 30px;
+            width: 100px;
+            height: 70px;
+            background-color: #FFF4F2;
+        }
+    </style>
 </head>
     <body class="w3-light-grey">
         <!--Top Panel-->
         <div class="w3-bar w3-black w3-wide w3-padding w3-card">
-            <a href="#home" class="w3-bar-item w3-button"><b>R U D</b>   <i>Your reddit media downloader</i></a>
+            <a href="#home" class="w3-bar-item w3-button"><b>R</b>eddit <b>U</b>rl <b>D</b>ownloader</a>
             <div class="w3-right w3-hide-small">
-                <a href="#accinfo" class="w3-bar-item w3-button">Account</a>
-                <a href="#logout" class="w3-bar-item w3-button">Logout</a>
+                <a href="#accinfo" class="w3-bar-item w3-button"><b>A</b>ccount</a>
+                <a href="#logout" class="w3-bar-item w3-button"><b>L</b>ogout</a>
             </div>
         </div>
         <!--Body-->
@@ -51,8 +63,6 @@
                         <button class="w3-button w3-dark-gray w3-margin-left w3-right" id="adds">Add Url</button>
                     </div>
                     <div class="w3-row w3-center">
-                        <button class="w3-button w3-dark-gray" id="ping">Ping</button>
-                        <button class="w3-button w3-dark-gray" id="url">URL</button>
                         <button class="w3-button w3-dark-gray" id="search">Search</button>
                         <button class="w3-button w3-dark-gray" id="download">Download</button>
                         <button class="w3-button w3-dark-gray" id="down">Down</button>                    
@@ -60,138 +70,191 @@
                     
                 </div>
                 <!--RECENT/POPULAR-->
-                <div class="w3-container w3-card w3-gray w3-margin">
-                    <div class="w3-half w3-card w3-gray">
+                <div class="w3-container w3-card w3-gray w3-margin" style="height:850px;">
+                    <!--RECENT-->
+                    <div class="w3-half w3-card w3-gray w3-column" style="height:50%;">
                         <header class="w3-dark-gray w3-padding">
                             <a class="w3-button" href="#recent">Recent</a>
                         </header> 
-                        <body>
-                            <div class="w3-row w3-margin">
-                                <div class="w3-display-container w3-half">
-                                    <input type="checkbox" class="w3-check w3-display-topleft w3-hide-small" id="rcbox">
-                                    <img src="tlxl3rtqhse71.jpg" style="width:100%">
-                                </div>
-                                <div class="w3-half">
-                                    <p class="w3-margin-left">
-                                        <b>Subname</b>
-                                        <br>
-                                        Type Nump Date
-                                    </p>
-                                </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px;">
                             </div>
-                            <div class="w3-row w3-margin">
-                                <div class="w3-display-container w3-half">
-                                    <input type="checkbox" class="w3-check w3-display-topleft w3-hide-small" id="rcbox">
-                                    <img src="tlxl3rtqhse71.jpg" style="width:100%">
-                                </div>
-                                <div class="w3-half">
-                                    <p class="w3-margin-left">
-                                        <b>Subname</b>
-                                        <br>
-                                        Type Nump Date
-                                    </p>
-                                </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
                             </div>
-                            <div class="w3-row w3-margin">
-                                <div class="w3-display-container w3-half">
-                                    <input type="checkbox" class="w3-check w3-display-topleft w3-hide-small" id="rcbox">
-                                    <img src="tlxl3rtqhse71.jpg" style="width:100%">
-                                </div>
-                                <div class="w3-half">
-                                    <p class="w3-margin-left">
-                                        <b>Subname</b>
-                                        <br>
-                                        Type Nump Date
-                                    </p>
-                                </div>
+                        </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
                             </div>
-                            <div class="w3-row w3-margin">
-                                <div class="w3-display-container w3-half">
-                                    <input type="checkbox" class="w3-check w3-display-topleft w3-hide-small" id="rcbox">
-                                    <img src="tlxl3rtqhse71.jpg" style="width:100%">
-                                </div>
-                                <div class="w3-half">
-                                    <p class="w3-margin-left">
-                                        <b>Subname</b>
-                                        <br>
-                                        Type Nump Date
-                                    </p>
-                                </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
                             </div>
-                        </body>
+                        </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
+                            </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="w3-half w3-card w3-gray">
+                    <!--RECENT NSFW-->
+                    <div class="w3-half w3-card w3-gray" style="height:50%;">
+                        <header class="w3-dark-gray w3-padding w3-column">
+                            <a class="w3-button" href="#recent">Recent NSFW</a>
+                        </header> 
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px;">
+                            </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
+                            </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
+                            </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!--POPULAR-->
+                    <div class="w3-half w3-card w3-gray w3-column" style="height:50%;">
                         <header class="w3-dark-gray w3-padding">
                             <a class="w3-button" href="#recent">Popular</a>
                         </header> 
-                        <body>
-                            <div class="w3-row w3-margin">
-                                <div class="w3-display-container w3-half">
-                                    <input type="checkbox" class="w3-check w3-display-topleft w3-hide-small" id="rcbox">
-                                    <img src="tlxl3rtqhse71.jpg" style="width:100%">
-                                </div>
-                                <div class="w3-half">
-                                    <p class="w3-margin-left">
-                                        <b>Subname</b>
-                                        <br>
-                                        Type Nump Date
-                                    </p>
-                                </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px;">
                             </div>
-                            <div class="w3-row w3-margin">
-                                <div class="w3-display-container w3-half">
-                                    <input type="checkbox" class="w3-check w3-display-topleft w3-hide-small" id="rcbox">
-                                    <img src="tlxl3rtqhse71.jpg" style="width:100%">
-                                </div>
-                                <div class="w3-half">
-                                    <p class="w3-margin-left">
-                                        <b>Subname</b>
-                                        <br>
-                                        Type Nump Date
-                                    </p>
-                                </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
                             </div>
-                            <div class="w3-row w3-margin">
-                                <div class="w3-display-container w3-half">
-                                    <input type="checkbox" class="w3-check w3-display-topleft w3-hide-small" id="rcbox">
-                                    <img src="tlxl3rtqhse71.jpg" style="width:100%">
-                                </div>
-                                <div class="w3-half">
-                                    <p class="w3-margin-left">
-                                        <b>Subname</b>
-                                        <br>
-                                        Type Nump Date
-                                    </p>
-                                </div>
+                        </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
                             </div>
-                            <div class="w3-row w3-margin">
-                                <div class="w3-display-container w3-half">
-                                    <input type="checkbox" class="w3-check w3-display-topleft w3-hide-small" id="rcbox">
-                                    <img src="tlxl3rtqhse71.jpg" style="width:100%">
-                                </div>
-                                <div class="w3-half">
-                                    <p class="w3-margin-left">
-                                        <b>Subname</b>
-                                        <br>
-                                        Type Nump Date
-                                    </p>
-                                </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
                             </div>
-                        </body>
+                        </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
+                            </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!--POPULAR NSFW-->
+                    <div class="w3-half w3-card w3-gray" style="height:50%;">
+                        <header class="w3-dark-gray w3-padding w3-column">
+                            <a class="w3-button" href="#recent">Popular NSFW</a>
+                        </header> 
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px;">
+                            </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
+                            </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w3-row w3-margin">
+                            <div class="w3-half w3-column w3-center">
+                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
+                            </div>
+                            <div class="w3-half w3-column">
+                                <p class="w3-margin-left">
+                                    <b>Subname</b>
+                                    <br>
+                                    Type Nump Date
+                                </p>
+                            </div>
+                        </div> 
                     </div>
                 </div>
             </div>
             <!--URL TAB-->
-            <div class="w3-third">
+            <div class="w3-third w3-hide-small">
                 <div id="url-tab" class="w3-container w3-card w3-gray" style="margin: 16px 16px 16px 0px! important">
                     <header class="w3-dark-gray w3-padding w3-margin-bottom">
                         <input type="checkbox" class="w3-check w3-margin-right" id="select">
                         Your URLs
                     </header>
-                    <button class="w3-button w3-dark-gray" id="down">Download</button>
-                    <button class="w3-button w3-dark-gray" id="save">Save</button>
+                    <button class="w3-button w3-dark-gray" id="downUrl">Download</button>
                     <button class="w3-button w3-dark-gray" id="del">Delete</button>
                 </div>
+            </div>
+            <!--URL TAB Mobile-->
+            <div class="downloadbutton w3-round-xxlarge w3-hide-large w3-center">
+                <p>Download<br>#5</p>
             </div>
         </div>
     
