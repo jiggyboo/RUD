@@ -1,0 +1,7 @@
+recents=[{id,sub,urls,type,time},...]
+populars=[{id,sub,urls,type,time},...]
+dailyPopRS={dayPos,daynPos}
+dayPos=[{id,sub,urls,type,time},...]
+dayNPos=[{id,sub,urls,type,time},...]
+
+dcnt={recent,recentN,pops,popsN,todays,todaysN}

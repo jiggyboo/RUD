@@ -41,7 +41,6 @@
                         <header class="w3-dark-gray w3-padding">Search</header>
                         <div class="w3-row">
                             <input type="text" class="w3-input w3-quarter" id="sub" placeholder="Subreddit">
-                            <input type="text" class="w3-input w3-quarter" id="nump" placeholder="Number of Post">
                             <select class="w3-select w3-quarter w3-border" id="type">
                                 <option value="" disabled selected>Choose type of post</option>
                                 <option value="hot">Hot</option>
@@ -56,16 +55,16 @@
                                 <option value="year">This Year</option>
                                 <option value="all">All Time</option>
                             </select>
+                            <input type="date" id="date" class="w3-quarter w3-border" style="padding:6px">
                         </div>
+                    </div>
+                    <div class="w3-row w3-center">
+                        <button class="w3-button w3-dark-gray" id="search" style="width:80px">Search</button>
+                        <button class="w3-button w3-dark-gray" id="down" style="width:80px">Down</button>
                     </div>
                     <div class="w3-container w3-border w3-margin w3-center" style= "display:none" id="sresult">
                         <a id="linkd" class="w3-margin-top" href="">Visit Reddit</a>
                         <button class="w3-button w3-dark-gray w3-margin-left w3-right" id="adds">Add Url</button>
-                    </div>
-                    <div class="w3-row w3-center">
-                        <button class="w3-button w3-dark-gray" id="search">Search</button>
-                        <button class="w3-button w3-dark-gray" id="download">Download</button>
-                        <button class="w3-button w3-dark-gray" id="down">Down</button>                    
                     </div>
                     
                 </div>
@@ -76,41 +75,17 @@
                         <header class="w3-dark-gray w3-padding">
                             <a class="w3-button" href="#recent">Recent</a>
                         </header> 
-                        <div class="w3-row w3-margin">
-                            <div class="w3-half w3-column w3-center">
-                                <img src="tlxl3rtqhse71.jpg" style="height:100px;">
-                            </div>
-                            <div class="w3-half w3-column">
-                                <p class="w3-margin-left">
-                                    <b>Subname</b>
-                                    <br>
-                                    Type Nump Date
-                                </p>
-                            </div>
+                        <div id="rec1" class="w3-row w3-margin">
+                            
                         </div>
-                        <div class="w3-row w3-margin">
-                            <div class="w3-half w3-column w3-center">
-                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
-                            </div>
-                            <div class="w3-half w3-column">
-                                <p class="w3-margin-left">
-                                    <b>Subname</b>
-                                    <br>
-                                    Type Nump Date
-                                </p>
-                            </div>
+                        <div id="rec2" class="w3-row w3-margin">
+
                         </div>
-                        <div class="w3-row w3-margin">
-                            <div class="w3-half w3-column w3-center">
-                                <img src="tlxl3rtqhse71.jpg" style="height:100px">
-                            </div>
-                            <div class="w3-half w3-column">
-                                <p class="w3-margin-left">
-                                    <b>Subname</b>
-                                    <br>
-                                    Type Nump Date
-                                </p>
-                            </div>
+                        <div id="rec3" class="w3-row w3-margin">
+
+                        </div>
+                        <div id="rec4" class="w3-row w3-margin">
+
                         </div>
                     </div>
                     <!--RECENT NSFW-->
@@ -253,7 +228,7 @@
                 </div>
             </div>
             <!--URL TAB Mobile-->
-            <div class="downloadbutton w3-round-xxlarge w3-hide-large w3-center">
+            <div class="downloadbutton w3-round-xxlarge w3-hide-large w3-hide-medium w3-center">
                 <p>Download<br>#5</p>
             </div>
         </div>
