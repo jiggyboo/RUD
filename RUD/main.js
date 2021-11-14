@@ -5,7 +5,7 @@ $(document).ready(function(){
     document.getElementById("search").onclick = function() {
         var sre = document.getElementById("sresult");
         if (sre.style.display === "none") {
-            sre.style.display = "block";
+            sre.style.display = "flex";
         }
     }
 
@@ -88,7 +88,20 @@ $(document).ready(function(){
         }
     }
 
-    document.getElementById('dcnt').onclick = dailyContent()
+    document.getElementById('dcnt').onclick = function() {
+        $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/dcnt')
+            .done((data) => {
+                var dCnt = data;
+                for (var i = 0; i < 8; i++) {
+                    document.getElementById('psfw'+(i+1)).innerHTML = dCnt[i];
+                    document.getElementById('pnsfw'+(i+1)).innerHTML = dCnt[i];
+                    document.getElementById('rsfw'+(i+1)).innerHTML = dCnt[i];
+                    document.getElementById('rnsfw'+(i+1)).innerHTML = dCnt[i];
+                    
+
+                }            
+        })
+    }
 
     document.getElementById('ping').onclick = function() {
         $.ajax({
@@ -121,14 +134,8 @@ $(document).ready(function(){
         for (var checkbox of checkboxes) {
             checkbox.checked = false;
         }
-        }
-
-    function dailyContent() {
-        $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amaonaws.com/api/dcnt')
-            .done((data) => {
-                console.log(data)
-            })
     }
+
 
     document.getElementById("del").onclick = function() {
         var checkboxes = document.getElementsByName("download");
@@ -139,3 +146,4 @@ $(document).ready(function(){
         }
     }
 });
+
