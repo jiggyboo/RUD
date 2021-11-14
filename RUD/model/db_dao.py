@@ -4,7 +4,7 @@ class DatabaseDao:
     def __init__(self, database):
         self.db = database
 
-    def dateToDT(date):
+    def dateToDT(self, date):
         dates = [date+" 00:00:00", date+" 23:59:59"]
         return dates
 
@@ -157,10 +157,10 @@ class DatabaseDao:
                 time
             FROM
                 urls
+            WHERE
+                nsfw = :pnsfw                
             ORDER BY
                 id DESC
-            WHERE
-                nsfw = :pnsfw
             LIMIT
                 5
         """),{'pnsfw':nsfw}).fetchall()

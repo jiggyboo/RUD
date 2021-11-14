@@ -26,24 +26,7 @@ class PrawDao:
             posts = subred.hot(limit = num)
         for post in posts:
             try:
-                url = post.url
-                extens = url.split(".")[-1]
-                if extens == 'jpg' or extens == 'png':
-                    urls.append(url)
-                elif extens == 'gifv':
-                    urls.append(url)
-                elif url.split('/')[2] == 'redgifs.com':
-                    try:
-                        r = requests.get(url)
-                        spl = r.text.split('/')
-                        num = 88
-                        for i in range(5):
-                            if spl[num+i].rfind('.mp4') != -1:
-                                mark = spl[num+i].split('"')[0]
-                        url = 'https://thumbs2.redgifs.com/'+mark
-                        urls.append(url)
-                    except:
-                        pass
+                urls.append(post.url)
             except:
                 print("failed")
                 pass

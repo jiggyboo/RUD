@@ -32,7 +32,7 @@ def create_endpoints(app, services):
     db_work = services.db_work
     dc_cache = services.dc_cache
 
-    @app.route("/sign-up", moethods=['POST'])
+    @app.route("/sign-up", methods=['POST'])
     def sign_up():
         new_user = request.json
         new_user_id = user_service.create_new_user(new_user)
@@ -51,7 +51,10 @@ def create_endpoints(app, services):
     @app.route("/api/search", methods=['GET'])
     def search():
         sub = request.args.get('sub')
-    	num = int(request.args.get('num'))
+        if request.args.get('num') == None:
+            num = 30
+        else:
+            num = int(request.args.get('num'))
         tim = request.args.get('tim')
         typ = request.args.get('typ')
         dated = request.args.get('date')

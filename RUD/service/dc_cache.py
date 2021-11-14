@@ -16,18 +16,18 @@ class DailyContentCache:
         subs = tp['subs']
         nSubs = tp['nSubs']
         for sub in subs:
-            urls = self.praw_dao(sub, 'all', 'top')
+            urls = self.praw_dao.search_sub(sub, 'all', 'top')
             if self.db_dao.get_sub(sub) == None:
                 self.db_dao.insert_sub({'sub':sub,'nsfw':0})
-            id = self.db_dao.insert_url({'urls':str(urls), 'type':'top','time':'all','sub':sub,'nsfw':0})
+            id = self.db_dao.insert_url({'urls':str(urls), 'type':'top','time':'all','sub':sub,'nsfw':0,'nump':30})
             content = self.db_dao.get_url_id(id)
             dayPos.append(content)
 
         for sub in nSubs:
-            urls = self.praw_dao(sub, 'all', 'top')
+            urls = self.praw_dao.search_sub(sub, 'all', 'top')
             if self.db_dao.get_sub(sub) == None:
                 self.db_dao.insert_sub({'sub':sub,'nsfw':1})
-            id = self.db_dao.insert_url({'urls':str(urls), 'type':'top','time':'all','sub':sub,'nsfw':1})
+            id = self.db_dao.insert_url({'urls':str(urls), 'type':'top','time':'all','sub':sub,'nsfw':1,'nump':30})
             content = self.db_dao.get_url_id(id)
             dayNPos.append(content)
 
@@ -46,7 +46,7 @@ class DailyContentCache:
 
     def dcnt(self):
         self.refresh_dcnt() if self.today != date.today() else None
-            
+        print(self.dailyContent)
         return self.dailyContent
 
     
