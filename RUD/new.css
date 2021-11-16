@@ -15,6 +15,21 @@ header {
     font-stretch: wider;
 }
 
+.box {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+.box .row.header {
+    flex: 0 1 auto;
+}
+.box .row.content{
+    flex: 1 1 auto;
+}
+.box .row.footer{
+    flex: 0 1 30px;
+}
+
 .col-1 {width: 8.33%}
 .col-2 {width: 16.66%}
 .col-3 {width: 25%}
@@ -27,7 +42,7 @@ header {
 .col-10 {width: 83.33%}
 .col-11 {width: 91.66%}
 .col-12 {width: 100%}
-[class*="col-"] {float: left;}
+[class*="col-"] {float: left; height: auto;}
 
 .top {
     top: 0;
@@ -44,8 +59,7 @@ header {
 }
 
 .gradient {
-    height:auto;
-    background-image: linear-gradient(to bottom, #42487a, #20163a);
+    height: 100vh; background-image: linear-gradient(to bottom, #42487a, #20163a);
 }
 .posttab {display: flex; justify-content: center; flex-wrap: wrap;}
 .post {float: left; width:49%; height:25%; border-radius: 3px; margin:2px 1px 0px 1px; background-color: rgba(240, 248, 255, 0.226);}
@@ -123,6 +137,7 @@ select option {background:#b3adc55b;}
     margin-left: 7px;
     margin-right: 7px;
     background-color: #513a7c1c;
+    height: 100%;
 }
 
 .threequarterT {
