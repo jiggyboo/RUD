@@ -12,171 +12,178 @@
 </head>
 
     <body class='gradient'>
-        <!--Top Panel-->
-        <div class="bar col-12">
-            <a class='btn hide-large'>Dropdown</a>
-            <a class="btn centerit" href="#home"><b>R</b>eddit <b>U</b>RL <b>D</b>ownloader</a>
-            <a class='btn hide-large' href="#logout"><b>L</b>ogout</a>     
-        </div>
+        <div class='box'>
+            <!--Top Panel-->
+            <div class="row header bar col-12">
+                <a class='btn hide-large'>Dropdown</a>
+                <a class="btn centerit" href="#home"><b>R</b>eddit <b>U</b>RL <b>D</b>ownloader</a>
+                <a class='btn hide-large' href="#logout"><b>L</b>ogout</a>     
+            </div>
 
-        <!--Body-->
-        <div>
-            <!--Ad Space-->
-            <div class="col-2">
-                <div class="ad">
-                    Advertisement
-                </div>
-            </div>
-            <!--SEARCH BAR and RECENT/POPULAR-->
-            <div class="col-8">
-                <!--SEARCH BAR-->
-                <div class="threequarterT biground card">
-                    <div class="center">
-                        <select class="searchbaritm" id="type">
-                            <option value="top" selected>Top</option>
-                            <option value="hot">Hot</option>
-                            <option value="new">New</option>
-                        </select
-                        ><select class="searchbaritmBS" id="time">
-                            <option value="hour" selected>Now</option>
-                            <option value="day">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                            <option value="year">This Year</option>
-                            <option value="all">All Time</option>
-                        </select
-                        ><input class="searchbaritmBS" type="date" id="date"
-                        ><input class="searchbaritmB" type="text" id="sub" placeholder="Subreddit"
-                        ><button class="searchbaritmS" id="search">Search</button>
-                    </div>
-                    <!-- <div class="center">
-                        <button class="searchbarbtn margin" id="search">Search</button>
-                        <button class="searchbarbtn margin" id="dcnt">DCNT</button>
-                    </div> -->
-                    <div style= "display:none" id="sresult">
-                        <a id="linkd" href="">Visit Reddit</a><p id="freq">view: 21</p>
-                        <button class="sresult" id="down">Add Url</button>
-                    </div>   
-                </div>
-                <!--RECENT/POPULAR-->
-                <div class="threequarter round card" style="height:850px;">
-                    <!--RECENT-->
-                    <div class="halfl">
-                        <header class="center round headcolor">
-                            <a class="btn" href="#recent">Recent</a>
-                        </header> 
-                        <div class="posttab" style="height:87%">
-                            <div id="rsfw1" class="post">
-                            </div>
-                            <div id="rsfw2" class="post">
-                            </div>
-                            <div id="rsfw3" class="post">
-                            </div>
-                            <div id="rsfw4" class="post">
-                            </div>
-                            <div id="rsfw5" class="post">
-                            </div>
-                            <div id="rsfw6" class="post">
-                            </div>
-                            <div id="rsfw7" class="post">
-                            </div>
-                            <div id="rsfw8" class="post">
-                            </div>                        
-                        </div>
-                    </div>
-                    <!--RECENT NSFW-->
-                    <div class="halfr">
-                        <header class="center round headcolor">
-                            <a class="btn" href="#recent">Recent NSFW</a>
-                        </header> 
-                        <div class="posttab" style="height:87%">
-                            <div id="rnsfw1" class="post">
-                            </div>
-                            <div id="rnsfw2" class="post">
-                            </div>
-                            <div id="rnsfw3" class="post">
-                            </div>
-                            <div id="rnsfw4" class="post">
-                            </div>
-                            <div id="rnsfw5" class="post">
-                            </div>
-                            <div id="rnsfw6" class="post">
-                            </div>
-                            <div id="rnsfw7" class="post">
-                            </div>
-                            <div id="rnsfw8" class="post">
-                            </div>
-                        </div>
-                    </div>
-                    <!--POPULAR-->
-                    <div class="halfl">
-                        <header class="center round headcolor">
-                            <a class="btn" href="#recent">Popular</a>
-                        </header> 
-                        <div class="posttab" style="height:87%">
-                            <div id="psfw1" class="post">
-                            </div>
-                            <div id="psfw2" class="post">
-                            </div>
-                            <div id="psfw3" class="post">
-                            </div>
-                            <div id="psfw4" class="post">
-                            </div>
-                            <div id="psfw5" class="post">
-                            </div>
-                            <div id="psfw6" class="post">
-                            </div>
-                            <div id="psfw7" class="post">
-                            </div>
-                            <div id="psfw8" class="post">
-                            </div>
-                        </div>
-                    </div>
-                    <!--POPULAR NSFW-->
-                    <div class="halfr">
-                        <header class="center round headcolor">
-                            <a class="btn" href="#recent">Popular NSFW</a>
-                        </header> 
-                        <div class="posttab" style="height:87%">
-                            <div id="pnsfw1" class="post">
-                            </div>
-                            <div id="pnsfw2" class="post">
-                            </div>
-                            <div id="pnsfw3" class="post">
-                            </div>
-                            <div id="pnsfw4" class="post">
-                            </div>
-                            <div id="pnsfw5" class="post">
-                            </div>
-                            <div id="pnsfw6" class="post">
-                            </div>
-                            <div id="pnsfw7" class="post">
-                            </div>
-                            <div id="pnsfw8" class="post">
-                            </div>
-                        </div>
+            <!--Body-->
+            <div class="row content">
+                <!--Ad Space-->
+                <div class="col-2">
+                    <div class="ad">
+                        Advertisement
                     </div>
                 </div>
-            </div>
-            <!--URL TAB-->
-            <div class="col-2">
-                <div id="url-tab" class="onequarterT round card hide-large">
-                    <header class="headcolor round">
-                        <input type="checkbox" id="select">
-                        URLs
-                    </header>
-                    <div class="urltab">
-                        <button class="urlbtn margin" id="downUrl">Save</button>
-                        <button class="urlbtn margin" id="del">Delete</button>    
+                <!--SEARCH BAR and RECENT/POPULAR-->
+                <div class="col-8" style="height:88%">
+                    <!--SEARCH BAR-->
+                    <div class="threequarterT biground card">
+                        <div class="center">
+                            <select class="searchbaritm" id="type">
+                                <option value="top" selected>Top</option>
+                                <option value="hot">Hot</option>
+                                <option value="new">New</option>
+                            </select
+                            ><select class="searchbaritmBS" id="time">
+                                <option value="hour" selected>Now</option>
+                                <option value="day">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                                <option value="all">All Time</option>
+                            </select
+                            ><input class="searchbaritmBS" type="date" id="date"
+                            ><input class="searchbaritmB" type="text" id="sub" placeholder="Subreddit"
+                            ><button class="searchbaritmS" id="search">Search</button>
+                        </div>
+                        <!-- <div class="center">
+                            <button class="searchbarbtn margin" id="search">Search</button>
+                            <button class="searchbarbtn margin" id="dcnt">DCNT</button>
+                        </div> -->
+                        <div style= "display:none" id="sresult">
+                            <a id="linkd" href="">Visit Reddit</a><p id="freq">view: 21</p>
+                            <button class="sresult" id="down">Add Url</button>
+                        </div>   
+                    </div>
+                    <!--RECENT/POPULAR-->
+                    <div class="threequarter round card">
+                        <!--RECENT-->
+                        <div class="halfl">
+                            <header class="center round headcolor">
+                                <a class="btn" href="#recent">Recent</a>
+                            </header> 
+                            <div class="posttab" style="height:87%">
+                                <div id="rsfw1" class="post">
+                                </div>
+                                <div id="rsfw2" class="post">
+                                </div>
+                                <div id="rsfw3" class="post">
+                                </div>
+                                <div id="rsfw4" class="post">
+                                </div>
+                                <div id="rsfw5" class="post">
+                                </div>
+                                <div id="rsfw6" class="post">
+                                </div>
+                                <div id="rsfw7" class="post">
+                                </div>
+                                <div id="rsfw8" class="post">
+                                </div>                        
+                            </div>
+                        </div>
+                        <!--RECENT NSFW-->
+                        <div class="halfr">
+                            <header class="center round headcolor">
+                                <a class="btn" href="#recent">Recent NSFW</a>
+                            </header> 
+                            <div class="posttab" style="height:87%">
+                                <div id="rnsfw1" class="post">
+                                </div>
+                                <div id="rnsfw2" class="post">
+                                </div>
+                                <div id="rnsfw3" class="post">
+                                </div>
+                                <div id="rnsfw4" class="post">
+                                </div>
+                                <div id="rnsfw5" class="post">
+                                </div>
+                                <div id="rnsfw6" class="post">
+                                </div>
+                                <div id="rnsfw7" class="post">
+                                </div>
+                                <div id="rnsfw8" class="post">
+                                </div>
+                            </div>
+                        </div>
+                        <!--POPULAR-->
+                        <div class="halfl">
+                            <header class="center round headcolor">
+                                <a class="btn" href="#recent">Popular</a>
+                            </header> 
+                            <div class="posttab" style="height:87%">
+                                <div id="psfw1" class="post">
+                                </div>
+                                <div id="psfw2" class="post">
+                                </div>
+                                <div id="psfw3" class="post">
+                                </div>
+                                <div id="psfw4" class="post">
+                                </div>
+                                <div id="psfw5" class="post">
+                                </div>
+                                <div id="psfw6" class="post">
+                                </div>
+                                <div id="psfw7" class="post">
+                                </div>
+                                <div id="psfw8" class="post">
+                                </div>
+                            </div>
+                        </div>
+                        <!--POPULAR NSFW-->
+                        <div class="halfr">
+                            <header class="center round headcolor">
+                                <a class="btn" href="#recent">Popular NSFW</a>
+                            </header> 
+                            <div class="posttab" style="height:87%">
+                                <div id="pnsfw1" class="post">
+                                </div>
+                                <div id="pnsfw2" class="post">
+                                </div>
+                                <div id="pnsfw3" class="post">
+                                </div>
+                                <div id="pnsfw4" class="post">
+                                </div>
+                                <div id="pnsfw5" class="post">
+                                </div>
+                                <div id="pnsfw6" class="post">
+                                </div>
+                                <div id="pnsfw7" class="post">
+                                </div>
+                                <div id="pnsfw8" class="post">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <!--URL TAB-->
+                <div class="col-2">
+                    <div id="url-tab" class="onequarterT round card hide-large">
+                        <header class="headcolor round">
+                            <input type="checkbox" id="select">
+                            URLs
+                        </header>
+                        <div class="urltab">
+                            <button class="urlbtn margin" id="downUrl">Save</button>
+                            <button class="urlbtn margin" id="del">Delete</button>    
+                        </div>
+                    </div>
+                </div>
+                <!--URL TAB Mobile-->
+                <div class="downloadbutton hide-small">
+                    Download
+                </div>
             </div>
-            <!--URL TAB Mobile-->
-            <div class="downloadbutton hide-small">
-                Download
+
+            <!--FOOTER-->
+            <div class="row footer">
             </div>
+
         </div>
-    
+            
         <script src="main.js"></script>
         <noscript>Javascript not activated</noscript>
     </body>
