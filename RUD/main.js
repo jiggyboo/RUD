@@ -22,24 +22,24 @@ $(document).ready(function(){
         }
     }
 
-    document.getElementById("adds").onclick = function() {
-        var red = $("#sub").val();
-        var typ = $("#type").val();
-        var tim = $("#time").val();
-        $('#url-tab').append(
-            '<div class="w3-card w3-container w3-gray w3-border" style="margin:5px" name="ubody">' +
-                '<header class="w3-dark-gray">'+
-                    '<input type="checkbox" name="download" checked="checked" class="w3-check w3_black w3-margin-right">'+
-                    red+
-                '</header>'+
-                '<body class="w3-gray">'+
-                    '<div class="w3-half" style="padding:2px">'+
-                        typ +" "+ tim +
-                    '</div>'+
-                    '<button class="w3-button w3-dark-grey" style="padding:0px; margin:auto" id="downe">Download</button>'+
-                '</body>'+
-            '</div>');
-    }
+    // document.getElementById("adds").onclick = function() {
+    //     var red = $("#sub").val();
+    //     var typ = $("#type").val();
+    //     var tim = $("#time").val();
+    //     $('#url-tab').append(
+    //         '<div class="w3-card w3-container w3-gray w3-border" style="margin:5px" name="ubody">' +
+    //             '<header class="w3-dark-gray">'+
+    //                 '<input type="checkbox" name="download" checked="checked" class="w3-check w3_black w3-margin-right">'+
+    //                 red+
+    //             '</header>'+
+    //             '<body class="w3-gray">'+
+    //                 '<div class="w3-half" style="padding:2px">'+
+    //                     typ +" "+ tim +
+    //                 '</div>'+
+    //                 '<button class="w3-button w3-dark-grey" style="padding:0px; margin:auto" id="downe">Download</button>'+
+    //             '</body>'+
+    //         '</div>');
+    // }
 
     document.getElementById("down").onclick = function() {
         var red = $("#sub").val();
@@ -88,39 +88,50 @@ $(document).ready(function(){
         }
     }
 
-    document.getElementById('dcnt').onclick = function() {
-        $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/dcnt')
-            .done((data) => {
-                var dCnt = data;
-                for (var i = 0; i < 8; i++) {
-                    document.getElementById('psfw'+(i+1)).innerHTML = dCnt[i];
-                    document.getElementById('pnsfw'+(i+1)).innerHTML = dCnt[i];
-                    document.getElementById('rsfw'+(i+1)).innerHTML = dCnt[i];
-                    document.getElementById('rnsfw'+(i+1)).innerHTML = dCnt[i];
+    // document.getElementById('dcnt').onclick = function() {
+    //     $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/dcnt')
+    //         .done((data) => {
+    //             var dCnt = data;
+    //             for (var i = 0; i < 8; i++) {
+    //                 document.getElementById('psfw'+(i+1)).innerHTML = dCnt['pops'][i]['sub'];
+    //                 document.getElementById('pnsfw'+(i+1)).innerHTML = dCnt['popsN'][i]['sub'];
+    //                 document.getElementById('rsfw'+(i+1)).innerHTML = dCnt['recent'][i]['sub'];
+    //                 document.getElementById('rnsfw'+(i+1)).innerHTML = dCnt['recentN'][i]['sub'];
                     
 
-                }            
-        })
+    //             }            
+    //     })
+    // }
+
+    document.getElementById('hidepanelY').onclick = function() {
+        document.getElementById('hidepanel').style.display = "none";
     }
 
-    document.getElementById('ping').onclick = function() {
-        $.ajax({
-            method: "GET",
-            dataType: "text",
-            url: "http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/ping",
-            success: function(msg) {
-                console.log(msg);
-                $('#url-tab').append(
-                    '<div class="w3-card w3-container w3-gray w3-border" style="margin:5px" name="ubody">' +
-                    '<header class="w3-dark-gray">'+
-                        '<input type="checkbox" name="download" checked="checked" class="w3-check w3_black">'+
-                        msg+
-                    '</header>'+
-                    '</div>'
-                )
-            }
-        });
+    document.getElementById('hidepanelN').onclick = function() {
+        document.getElementById('hidepanel').style.backgroundColor = "#20163a";
+        document.getElementById('hidepanelY').hidden = true;
+        document.getElementById('hidepanelN').hidden = true;
+        document.getElementById('hptext').hidden = true;
     }
+
+    // document.getElementById('ping').onclick = function() {
+    //     $.ajax({
+    //         method: "GET",
+    //         dataType: "text",
+    //         url: "http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/ping",
+    //         success: function(msg) {
+    //             console.log(msg);
+    //             $('#url-tab').append(
+    //                 '<div class="w3-card w3-container w3-gray w3-border" style="margin:5px" name="ubody">' +
+    //                 '<header class="w3-dark-gray">'+
+    //                     '<input type="checkbox" name="download" checked="checked" class="w3-check w3_black">'+
+    //                     msg+
+    //                 '</header>'+
+    //                 '</div>'
+    //             )
+    //         }
+    //     });
+    // }
 
     function selAll() {
         var checkboxes = document.getElementsByName("download");
@@ -145,5 +156,24 @@ $(document).ready(function(){
             }
         }
     }
+
+    function chLength(x) {
+        if (x.matches) {
+            document.getElementById("home").innerText = "RUD";
+        }
+    }
+
+    function chLength2(x) {
+        if (x.matches) {
+            document.getElementById("home").innerText = "Reddit URL Downloader";
+        }
+    }
+    var x = window.matchMedia("(max-width: 768px)");
+    chLength(x);
+    x.addEventListener("change", chLength);
+
+    var y = window.matchMedia("(min-width: 768px)");
+    chLength2(y);
+    y.addEventListener("change", chLength2);
 });
 
