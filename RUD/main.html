@@ -23,7 +23,23 @@
                 <!--Ad Space-->
                 <div class="col-2">
                     <div class="ad">
-                        Advertisement
+                 
+            }
+        }
+        updateLen();
+        console.log(urls);
+    }
+
+    function updateLen() {
+        document.getElementById("listlen").innerText = urls.length;
+    }
+
+    document.getElementById('downUrl').onclick = downUrl;
+
+    function downUrl() {
+        if (urls.length == 0) {
+            console.log("list empty");
+            return alert("Your list is empty!");       Advertisement
                     </div>
                 </div>
                 <!--SEARCH BAR and RECENT/POPULAR-->
