@@ -5,19 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reddit URL Downloader</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="jszip.min.js"></script>
     <script src="FileSaver.min.js"></script>
-    <script src="download.js"></script>
     <link rel="stylesheet" href="new.css">
 </head>
 
     <body class='gradient'>
         <div class='box'>
             <!--Top Panel-->
-            <div class="row header bar col-12">
-                <a class='btn hide-large'>Dropdown</a>
-                <a class="btn centerit" href="#home"><b>R</b>eddit <b>U</b>RL <b>D</b>ownloader</a>
-                <a class='btn hide-large' href="#logout"><b>L</b>ogout</a>     
+            <div class="row header bar">
+                <a id="home" class="btn centerit" href="#home"><b>R</b>eddit <b>U</b>RL <b>D</b>ownloader</a>
+                <a class='btn item1 hide-large'><b>A</b>ccount</a>
+                <a class='btn item2 hide-large' href="#logout"><b>L</b>ogout</a>     
             </div>
 
             <!--Body-->
@@ -30,15 +28,38 @@
                 </div>
                 <!--SEARCH BAR and RECENT/POPULAR-->
                 <div class="col-8" style="height:88%">
+                    <!--SEARCH MODAL-->
+                    <div class="modal" id="modal">
+                        <div class="modal_content">
+                            <div class="modal_header">
+                                <span class="close">&times;</span>
+                                <h2>Search Result</h2>
+                            </div>
+                            <div class="modal_body">
+                                <div class="modsr">
+                                    <div class="mb_header">Current Content</div>
+                                    <div class="mb_body" id="modsr"></div>
+                                </div>
+                                <div class="modpr">
+                                    <div class="mb_header">Past Contents</div>
+                                    <div class="mb_body" id="modpr"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!--SEARCH BAR-->
                     <div class="threequarterT biground card">
-                        <div class="center">
-                            <select class="searchbaritm" id="type">
+                        <div id = "searchbar" class="center">
+                            <select class="searchbaritm f" id="rcd">
+                                <option value="Reddit" selected>Reddit</option>
+                                <option value="CD">Cyberdrop</option>
+                            </select
+                            ><select class="searchbaritm bS" id="type">
                                 <option value="top" selected>Top</option>
                                 <option value="hot">Hot</option>
                                 <option value="new">New</option>
                             </select
-                            ><select class="searchbaritmBS" id="time">
+                            ><select class="searchbaritm bS" id="time">
                                 <option value="hour" selected>Now</option>
                                 <option value="day">Today</option>
                                 <option value="week">This Week</option>
@@ -46,141 +67,131 @@
                                 <option value="year">This Year</option>
                                 <option value="all">All Time</option>
                             </select
-                            ><input class="searchbaritmBS" type="date" id="date"
-                            ><input class="searchbaritmB" type="text" id="sub" placeholder="Subreddit"
-                            ><button class="searchbaritmS" id="search">Search</button>
-                        </div>
-                        <!-- <div class="center">
-                            <button class="searchbarbtn margin" id="search">Search</button>
-                            <button class="searchbarbtn margin" id="dcnt">DCNT</button>
-                        </div> -->
-                        <div style= "display:none" id="sresult">
-                            <a id="linkd" href="">Visit Reddit</a><p id="freq">view: 21</p>
-                            <button class="sresult" id="down">Add Url</button>
-                        </div>   
+                            ><input class="searchbaritm sB" type="text" id="sub" placeholder="Subreddit"
+                            ><button class="searchbaritm S" id="search">Search</button>
+                        </div> 
                     </div>
                     <!--RECENT/POPULAR-->
-                    <div class="threequarter round card">
+                    <div class="threequarter maingrid round card">
                         <!--RECENT-->
-                        <div class="halfl">
-                            <header class="center round headcolor">
-                                <a class="btn" href="#recent">Recent</a>
-                            </header> 
-                            <div class="posttab" style="height:87%">
-                                <div id="rsfw1" class="post">
-                                </div>
-                                <div id="rsfw2" class="post">
-                                </div>
-                                <div id="rsfw3" class="post">
-                                </div>
-                                <div id="rsfw4" class="post">
-                                </div>
-                                <div id="rsfw5" class="post">
-                                </div>
-                                <div id="rsfw6" class="post">
-                                </div>
-                                <div id="rsfw7" class="post">
-                                </div>
-                                <div id="rsfw8" class="post">
-                                </div>                        
+                        <div class="posts">
+                            <div class="center round head">
+                                <a class="btn title" href="#recent">Recent</a>
+                            </div>
+                            <div id="todays0" class="post">
+                            </div>          
+                            <div id="todays1" class="post">
+                            </div>
+                            <div id="todays2" class="post">
+                            </div>
+                            <div id="todays3" class="post">
+                            </div>
+                            <div id="todays4" class="post">
+                            </div>
+                            <div id="todays5" class="post">
+                            </div>
+                            <div id="todays6" class="post">
+                            </div>
+                            <div id="todays7" class="post">
+                            </div>               
+                        </div>
+                        <!--POPULAR-->
+                        <div class="posts">
+                            <div class="center round head">
+                                <a class="btn title" href="#recent">Popular</a>
+                            </div> 
+                            <div id="popular0" class="post">
+                            </div>
+                            <div id="popular1" class="post">
+                            </div>
+                            <div id="popular2" class="post">
+                            </div>
+                            <div id="popular3" class="post">
+                            </div>
+                            <div id="popular4" class="post">
+                            </div>
+                            <div id="popular5" class="post">
+                            </div>
+                            <div id="popular6" class="post">
+                            </div>
+                            <div id="popular7" class="post">
+                            </div>
+                        </div>
+                        <div id="hidepanel" class="hidepanel">
+                            <div id="hptext">
+                                Are you over 18?
+                            </div>
+                            <div>
+                                <button id="hidepanelY">Yes</button>
+                                <button id="hidepanelN">No</button>
                             </div>
                         </div>
                         <!--RECENT NSFW-->
-                        <div class="halfr">
-                            <header class="center round headcolor">
+                        <div class="nsfwl posts">
+                            <div class="center round head">
                                 <a class="btn" href="#recent">Recent NSFW</a>
-                            </header> 
-                            <div class="posttab" style="height:87%">
-                                <div id="rnsfw1" class="post">
-                                </div>
-                                <div id="rnsfw2" class="post">
-                                </div>
-                                <div id="rnsfw3" class="post">
-                                </div>
-                                <div id="rnsfw4" class="post">
-                                </div>
-                                <div id="rnsfw5" class="post">
-                                </div>
-                                <div id="rnsfw6" class="post">
-                                </div>
-                                <div id="rnsfw7" class="post">
-                                </div>
-                                <div id="rnsfw8" class="post">
-                                </div>
+                            </div> 
+                            <div id="todaysN0" class="post">
                             </div>
-                        </div>
-                        <!--POPULAR-->
-                        <div class="halfl">
-                            <header class="center round headcolor">
-                                <a class="btn" href="#recent">Popular</a>
-                            </header> 
-                            <div class="posttab" style="height:87%">
-                                <div id="psfw1" class="post">
-                                </div>
-                                <div id="psfw2" class="post">
-                                </div>
-                                <div id="psfw3" class="post">
-                                </div>
-                                <div id="psfw4" class="post">
-                                </div>
-                                <div id="psfw5" class="post">
-                                </div>
-                                <div id="psfw6" class="post">
-                                </div>
-                                <div id="psfw7" class="post">
-                                </div>
-                                <div id="psfw8" class="post">
-                                </div>
+                            <div id="todaysN1" class="post">
+                            </div>
+                            <div id="todaysN2" class="post">
+                            </div>
+                            <div id="todaysN3" class="post">
+                            </div>
+                            <div id="todaysN4" class="post">
+                            </div>
+                            <div id="todaysN5" class="post">
+                            </div>
+                            <div id="todaysN6" class="post">
+                            </div>
+                            <div id="todaysN7" class="post">
                             </div>
                         </div>
                         <!--POPULAR NSFW-->
-                        <div class="halfr">
-                            <header class="center round headcolor">
+                        <div class="nsfwr posts">
+                            <div class="center round head">
                                 <a class="btn" href="#recent">Popular NSFW</a>
-                            </header> 
-                            <div class="posttab" style="height:87%">
-                                <div id="pnsfw1" class="post">
-                                </div>
-                                <div id="pnsfw2" class="post">
-                                </div>
-                                <div id="pnsfw3" class="post">
-                                </div>
-                                <div id="pnsfw4" class="post">
-                                </div>
-                                <div id="pnsfw5" class="post">
-                                </div>
-                                <div id="pnsfw6" class="post">
-                                </div>
-                                <div id="pnsfw7" class="post">
-                                </div>
-                                <div id="pnsfw8" class="post">
-                                </div>
+                            </div> 
+                            <div id="popularN0" class="post">
+                            </div>
+                            <div id="popularN1" class="post">
+                            </div>
+                            <div id="popularN2" class="post">
+                            </div>
+                            <div id="popularN3" class="post">
+                            </div>
+                            <div id="popularN4" class="post">
+                            </div>
+                            <div id="popularN5" class="post">
+                            </div>
+                            <div id="popularN6" class="post">
+                            </div>
+                            <div id="popularN7" class="post">
                             </div>
                         </div>
                     </div>
                 </div>
                 <!--URL TAB-->
                 <div class="col-2">
-                    <div id="url-tab" class="onequarterT round card hide-large">
-                        <header class="headcolor round">
-                            <input type="checkbox" id="select">
-                            URLs
+                    <div id="url-tab" class="yoururltab card transform">
+                        <header id="head" class="headcolor round">
+                            <input type="checkbox" class="checki" id="select">
+                            Your URLs<div class="listlen" id="listlen">0</div>
                         </header>
-                        <div class="urltab">
+                        <div class="urltabbtns">
                             <button class="urlbtn margin" id="downUrl">Save</button>
-                            <button class="urlbtn margin" id="del">Delete</button>    
+                            <button class="urlbtn1 margin" id="del">Delete</button>    
+                        </div>
+                        <div class= "urltab-small" id="urls">
                         </div>
                     </div>
                 </div>
-                <!--URL TAB Mobile-->
-                <div class="downloadbutton hide-small">
-                    Download
-                </div>
-            </div>
-
-            <!--FOOTER-->
-            <div class="row footer">
-            </div>
+             </div>
+ 
+             <!--FOOTER-->
+             <div class="row footer">
+             </div>
 
         </div>
             
