@@ -1,15 +1,19 @@
+import json
 from sqlalchemy import text
+from datetime import date
 
 class DatabaseDao:
     def __init__(self, database):
         self.db = database
 
-    def dateToDT(self, date):
-        dates = [date+" 00:00:00", date+" 23:59:59"]
+    def dateToDT(self):
+        tdate = str(date.today())
+        dates = [tdate+" 00:00:00", tdate+" 23:59:59"]
         return dates
 
+
     def getT_url(self, url):
-        sdate = self.dateToDT(url['sdate'])
+        sdate = self.dateToDT()
         rurl = self.db.execute(text("""
             SELECT
                 id,
@@ -31,7 +35,7 @@ class DatabaseDao:
         } if rurl else None
 
     def get_url(self, url):
-        sdate = self.dateToDT(url['sdate'])
+        sdate = self.dateToDT()
         rurl = self.db.execute(text("""
             SELECT
                 id,
@@ -59,10 +63,8 @@ class DatabaseDao:
                 urls,
                 type,
                 time
-            FROM
-                urls
-            WHERE
-                id = :pid
+            FROM urls
+            WHERE id = :pid
         """),{'pid':id}).fetchone()
 
         return content
@@ -77,6 +79,17 @@ class DatabaseDao:
             'sub_name' : sub
         }).fetchone()
         return subn
+
+    def get_cd(self, url):
+        content = self.db.execute(text("""
+            SELECT
+                id,
+                title,
+                urls
+            FROM cds
+            WHERE url = :url
+        """),{'url':url}).fetchone()
+        return content
 
     def insert_url(self, url):
         return self.db.execute(text("""
@@ -108,6 +121,19 @@ class DatabaseDao:
             )
         """), sub).lastrowid
 
+    def insert_cd(self, cd):
+        return self.db.execute(text("""
+            INSERT INTO cds (
+                url,
+                title,
+                urls
+            ) VALUES (
+                :url,
+                :title,
+                :urls
+            )
+        """), cd).lastrowid
+
     # Increasing hits/viewcount to play with statistics.
     def increment_hits_sub(self, subname):
         self.db.execute(text("""
@@ -127,23 +153,32 @@ class DatabaseDao:
             'sub_id' : id
         })
 
+    def increment_hits_cd(self, id):
+        self.db.execute(text("""
+        UPDATE cds
+        SET hits = hits + 1
+        WHERE id = :cd_id
+        """), {
+            'cd_id' : id
+        })
+
     def increment_vc_sub(self, subname):
-            self.db.execute(text("""
-            UPDATE subs
-                    SET viewcount = viewcount + 1
-                    WHERE sub = :subname
-            """), {
-                    'subname' : subname
-            })
+        self.db.execute(text("""
+        UPDATE subs
+                SET viewcount = viewcount + 1
+                WHERE sub = :subname
+        """), {
+                'subname' : subname
+        })
 
     def increment_vc_url(self, id):
-            self.db.execute(text("""
-            UPDATE urls
-                    SET viewcount = viewcount + 1
-                    WHERE id = :sub_id
-            """), {
-                    'sub_id' : id
-            })
+        self.db.execute(text("""
+        UPDATE urls
+                SET viewcount = viewcount + 1
+                WHERE id = :sub_id
+        """), {
+                'sub_id' : id
+        })
     
     #Recently Added URLs
     def recents(self, nsfw):
@@ -162,11 +197,11 @@ class DatabaseDao:
             ORDER BY
                 id DESC
             LIMIT
-                5
+                8
         """),{'pnsfw':nsfw}).fetchall()
         for post in content:
-            recents.append(post)
-        return recents
+            recents.append(post._asdict())
+        return json.dumps(recents)
 
     #Popular posts based on the popular subs. Grab 5 subs with most hits -> Grab the url with most hits of each.
     def populars(self, nsfw):
@@ -199,5 +234,65 @@ class DatabaseDao:
             ORDER BY
                 hits DESC
             """),{'subn':pnsub['sub']}).fetchone()
-            populars.append(content)
-        return populars
+            populars.append(content._asdict())
+        return json.dumps(populars)
+
+    def topFive(self, sub):
+        topFive = []
+        content = self.db.execute(text("""
+            SELECT
+                id,
+                urls,
+                type,
+                time
+            FROM
+                urls
+            WHERE
+                sub = :subn
+            ORDER BY
+                hits DESC
+            LIMIT
+                5
+        """),{'subn':sub}).fetchall()
+        for post in content:
+            topFive.append(post._asdict())
+        return json.dumps(topFive)
+
+    def topFiveCD(self, sub):
+        topFive = []
+        content = self.db.execute(text("""
+            SELECT
+                id,
+                title,
+                urls
+            FROM
+                cds
+            WHERE
+                title
+            CONTAINS :subn
+            ORDER BY
+                hits DESC
+            LIMIT  
+                5
+        """),{'subn':sub}).fetchall()
+        for post in content:
+            topFive.append(post._asdict())
+        return json.dumps(topFive)
+
+    def recentCD(self):
+        recent = []
+        content = self.db.execute(text("""
+            SELECT
+                id,
+                title,
+                urls
+            FROM
+                cds
+            ORDER BY
+                id DESC
+            LIMIT
+                5
+        """)).fetchall()
+        for post in content:
+            recent.append(post._asdict())
+        return json.dumps(recent)

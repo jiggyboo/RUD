@@ -52,11 +52,28 @@ def create_endpoints(app, services):
     def search():
         sub = request.args.get('sub')
         if request.args.get('num') == None:
+            num = 40
+        else:
+            num = int(request.args.get('num'))
+        tim = request.args.get('tim')
+        typ = request.args.get('typ')
+        
+        return db_work.search(sub, num, tim, typ)
+
+    @app.route("/api/searcht", methods=['GET'])
+    def searcht():
+        sub = request.args.get('sub')
+        if request.args.get('num') == None:
             num = 30
         else:
             num = int(request.args.get('num'))
         tim = request.args.get('tim')
         typ = request.args.get('typ')
-        dated = request.args.get('date')
 
-        return db_work.search(sub, num, tim, typ, dated)
+        return db_work.searcht(sub, num, tim, typ)
+
+    @app.route("/api/cd", methods=['GET'])
+    def cd():
+        url = request.args.get('url')
+
+        return db_work.cd(url)

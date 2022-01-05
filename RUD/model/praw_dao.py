@@ -33,8 +33,9 @@ class PrawDao:
         return urls
 
     #Given the URL of Cyberdrop post, returns downloadable urls of each items in the gallery.
-    def downloadCD(url):
+    def search_cd(url):
         r = requests.get(url).text
+        title = r.split('" class="title has-text-centered" title="')[1].split('">')[0]
         urls = []
         pics = r.split('downloadUrl: "')
         for durl in pics[1:]:
@@ -46,7 +47,7 @@ class PrawDao:
             urls.append(url)
         print(len(urls))
 
-        return urls
+        return {'title':title,'urls':urls}
 
 
     #Finds top 5 of non-NSFW and NSFW subs from the currently hot subs on reddit.
@@ -63,3 +64,39 @@ class PrawDao:
                 subs.add(str(sub))
 
         return {'subs':list(subs),'nSubs':list(nSubs)}
+
+    #Finds top  5 of SFW and NSFW subs from Redditlist.
+    def downloadList(self):
+        sfw = requests.get('http://redditlist.com/sfw').text
+        nsfw = requests.get('http://redditlist.com/nsfw').text
+
+        sfwtemp = sfw.split('listing-header">Subscribers')
+        sfwtemp = sfwtemp[1].split("data-target-subreddit='")
+        sfws = []
+        print(len(sfwtemp))
+        for i in range(8):
+            sfws.append(sfwtemp[i+2].split("' data-target-filter")[0])
+
+        nsfwtemp = nsfw.split('listing-header">Subscribers')
+        nsfwtemp = nsfwtemp[1].split("data-target-subreddit='")
+        nsfws = []
+        print(len(nsfwtemp))
+        for i in range(8):
+            nsfws.append(nsfwtemp[i+1].split("' data-target-filter")[0])
+
+        sfwgtemp = sfw.split('listing-header">Growth')
+        sfwgtemp = sfwgtemp[1].split("data-target-subreddit='")
+        sfwg = []
+        print(len(sfwgtemp))
+        for i in range(8):
+            sfwg.append(sfwgtemp[i+1].split("' data-target-filter")[0])
+
+        nsfwgtemp = nsfw.split('listing-header">Growth')
+        nsfwgtemp = nsfwgtemp[1].split("data-target-subreddit='")
+        nsfwg = []
+        print(len(nsfwgtemp))
+        for i in range(8):
+            nsfwg.append(nsfwgtemp[i+1].split("' data-target-filter")[0])
+
+        return {'sfw':sfws,'nsfw':nsfws, 'sfwg':sfwg, 'nsfwg':nsfwg}
+
