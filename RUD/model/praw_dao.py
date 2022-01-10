@@ -45,6 +45,11 @@ class PrawDao:
             vvurl = vurl.split('href="')[1]
             url = vvurl.split('" target=')[0]
             urls.append(url)
+        vids = r.split('<a class="image" href="')
+        for vurl in vids[1:]:
+            vvurl = vurl.split('" target="')[0]
+            urls.append(vvurl)
+            
         print(len(urls))
 
         return {'title':title,'urls':urls}
