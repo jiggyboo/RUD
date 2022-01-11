@@ -60,7 +60,7 @@ $(document).ready(function(){
             else {
                 dData = {'sub':red,'typ':typ,'tim':''};
             }
-            $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/search', dData)
+            $.get('https://rud4u.xyz/api/search', dData)
                 .done((data) => {
                     temp = JSON.parse(data['tf']);
                     temp2 = JSON.parse(data['result']);
@@ -68,9 +68,9 @@ $(document).ready(function(){
                     let id = JSON.parse(data['result'])['id'];
                     console.log(id);
                     $('#modsr').append(
-                        '<div class="urlt" style="margin:5px" name="ubody">' +
+                        '<div class="modurlt" style="margin:5px" name="ubody">' +
                         '<button class="modadd">Add</button>' +
-                        '<div class="urltitm">'+red+'</div>'+'<div class="urltitm">'+typ+'</div>'+'<div class="urltitm">'+tim+'</div>' +
+                        '<div class="murltitm">'+red+'</div>'+'<div class="murltitm">'+typ+'</div>'+'<div class="murltitm">'+tim+'</div>' +
                         '<div style="display:none;">' + id + '</div>' +
                         '</div>'
                     );
@@ -78,9 +78,9 @@ $(document).ready(function(){
                         console.log(pc);
                         if (pc['id'] != id) {
                             $('#modpr').append(
-                                '<div class="urlt" style="margin:5px" name="ubody">' +
+                                '<div class="modurlt" style="margin:5px" name="ubody">' +
                                 '<button class="modadd">Add</button>' +
-                                '<div class="urltitm">'+red+'</div>'+'<div class="urltitm">'+pc['type']+'</div>'+'<div class="urltitm">'+pc['time']+'</div>' +
+                                '<div class="murltitm">'+red+'</div>'+'<div class="murltitm">'+pc['type']+'</div>'+'<div class="murltitm">'+pc['time']+'</div>' +
                                 '<div style="display:none;">' + pc['id'] + '</div>' +
                                 '</div>'
                             );
@@ -88,8 +88,8 @@ $(document).ready(function(){
                     }
                     if ($("#modpr").children().length == 0) {
                         $("#modpr").append(
-                            '<div class="urlt" style="margin:5px" name="ubody">' +
-                            '<div class="urltitm">'+'</div>'+'<div class="urltitm">N/A</div>'+'<div class="urltitm"></div>' +
+                            '<div class="modurltna" style="margin:5px" name="ubody">' +
+                            '<div class="murltitm">'+'</div>'+'<div class="murltitm">N/A</div>'+'<div class="murltitm"></div>' +
                             '<div style="display:none;"></div>' +
                             '</div>'
                         );
@@ -101,31 +101,43 @@ $(document).ready(function(){
         // Searching For Cyberdrop //
         else {
             var url = $("#sub").val();
-            $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/cd', {'url':url})
+            $.get('https://rud4u.xyz/api/cd', {'url':url})
             .done((data) => {
                 console.log(data);
                 //URL Search
                 if (url.includes('https')) {  
                     temp = JSON.parse(data['recent']);
-                    temp2 = JSON.parse(data['result']);
                     console.log(data);
-                    let id = temp2['id'];
-                    var title = temp2['title'];
+                    let id = 0;
+                    if (data['result'] == "Page No Longer Available") {
+                        alert("Page No Longer Available");
+                        $('#modsr').append(
+                            '<div class="modurlt" style="margin:5px" name="ubody">' +
+                            '<div class="murltitmcd">'+'</div>'+'<div class="murltitmcdt">N/A</div>'+'<div class="murltitm"></div>' +
+                            '<div style="display:none;"></div>' +
+                            '</div>'
+                        )
+                    }
+                    else {
+                        temp2 = JSON.parse(data['result']);
+                        id = temp2['id'];
+                        var title = temp2['title'];
 
-                    $('#modsr').append(
-                        '<div class="urlt" style="margin:5px" name="ubody">' +
-                        '<button class="modadd">Add</button>' +
-                        '<div class="urltitm">CyberDrop</div><div class="urltitm">'+title+'</div><div class="urltitm"></div>' +
-                        '<div style="display:none;">' + id + '</div>' +
-                        '</div>'
-                    )
+                        $('#modsr').append(
+                            '<div class="modurlt" style="margin:5px" name="ubody">' +
+                            '<button class="modadd">Add</button>' +
+                            '<div class="murltitmcd">CyberDrop</div><div class="murltitmcdt">'+title+'</div><div class="murltitm"></div>' +
+                            '<div style="display:none;">' + id + '</div>' +
+                            '</div>'
+                        )
+                    }
 
                     for (let pc of temp) {
                         if (pc['id'] != id) {
                             $('#modpr').append(
-                                '<div class="urlt" style="margin:5px" name="ubody">' +
+                                '<div class="modurlt" style="margin:5px" name="ubody">' +
                                 '<button class="modadd">Add</button>' +
-                                '<div class="urltitm">CyberDrop</div><div class="urltitm">'+pc['title']+'</div><div class="urltitm"></div>' +
+                                '<div class="murltitmcd">CyberDrop</div><div class="murltitmcdt">'+pc['title']+'</div><div class="murltitm"></div>' +
                                 '<div style="display:none;">' + pc['id'] + '</div>' +
                                 '</div>'
                             );
@@ -135,20 +147,31 @@ $(document).ready(function(){
                 //Query Search
                 else {
                     temp = JSON.parse(data['recent']);
-                    temp2 = JSON.parse(data['result']);
                     console.log(data);
-                    var ids = [];
-                    for (let pc of temp2) {
+                    if (temp2 == "QUERY NOT FOUND") {
+                        alert("Query Not Found");
                         $('#modsr').append(
-                            '<div class="urlt" style="margin:5px" name="ubody">' +
-                            '<button class="modadd">Add</button>' +
-                            '<div class="urltitm">CyberDrop</div><div class="urltitm">'+pc['title']+'</div><div class="urltitm"></div>' +
-                            '<div style="display:none;">' + pc['id'] + '</div>' +
+                            '<div class="modurlt" style="margin:5px" name="ubody">' +
+                            '<div class="murltitmcd">'+'</div>'+'<div class="murltitmcdt">N/A</div>'+'<div class="murltitm"></div>' +
+                            '<div style="display:none;"></div>' +
                             '</div>'
-                        );
-                        ids.push(pc['id']);
+                        )
                     }
-
+                    else {
+                        temp2 = JSON.parse(data['result']);
+                        var ids = [];
+                        for (let pc of temp2) {
+                            $('#modsr').append(
+                                '<div class="modurlt" style="margin:5px" name="ubody">' +
+                                '<button class="modadd">Add</button>' +
+                                '<div class="murltitmcd">CyberDrop</div><div class="murltitmcdt">'+pc['title']+'</div><div class="murltitm"></div>' +
+                                '<div style="display:none;">' + pc['id'] + '</div>' +
+                                '</div>'
+                            );
+                            ids.push(pc['id']);
+                        }
+                    }
+                    
                     for (let pc of temp) {
                         let x = 0
                         for (let num of ids) {
@@ -162,9 +185,9 @@ $(document).ready(function(){
                             continue;
                         }
                         $('#modpr').append(
-                            '<div class="urlt" style="margin:5px" name="ubody">' +
+                            '<div class="modurlt" style="margin:5px" name="ubody">' +
                             '<button class="modadd">Add</button>' +
-                            '<div class="urltitm">CyberDrop</div><div class="urltitm">'+pc['title']+'</div><div class="urltitm"></div>' +
+                            '<div class="murltitmcd">CyberDrop</div><div class="murltitmcdt">'+pc['title']+'</div><div class="murltitm"></div>' +
                             '<div style="display:none;">' + pc['id'] + '</div>' +
                             '</div>'
                         );
@@ -263,7 +286,7 @@ $(document).ready(function(){
     }
 
     function dcnt() {
-        $.get('http://ec2-3-35-138-18.ap-northeast-2.compute.amazonaws.com/api/dcnt')
+        $.get('https://rud4u.xyz/api/dcnt')
             .done((data) => {
                 let dCnt = data;
                 res['popular'] = JSON.parse(dCnt['pops']);

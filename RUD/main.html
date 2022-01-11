@@ -23,23 +23,7 @@
                 <!--Ad Space-->
                 <div class="col-2">
                     <div class="ad">
-                 
-            }
-        }
-        updateLen();
-        console.log(urls);
-    }
-
-    function updateLen() {
-        document.getElementById("listlen").innerText = urls.length;
-    }
-
-    document.getElementById('downUrl').onclick = downUrl;
-
-    function downUrl() {
-        if (urls.length == 0) {
-            console.log("list empty");
-            return alert("Your list is empty!");       Advertisement
+                        Advertisement
                     </div>
                 </div>
                 <!--SEARCH BAR and RECENT/POPULAR-->
@@ -76,12 +60,12 @@
                                 <option value="new">New</option>
                             </select
                             ><select class="searchbaritm bS" id="time">
-                                <option value="hour" selected>Now</option>
-                                <option value="day">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
+                                <option value="all" selected>All Time</option>
                                 <option value="year">This Year</option>
-                                <option value="all">All Time</option>
+                                <option value="month">This Month</option>
+                                <option value="week">This Week</option>
+                                <option value="day">Today</option>
+                                <option value="hour">Now</option>
                             </select
                             ><input class="searchbaritm sB" type="text" id="sub" placeholder="Subreddit"
                             ><button class="searchbaritm S" id="search">Search</button>

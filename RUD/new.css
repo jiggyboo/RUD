@@ -106,7 +106,7 @@ header {
     color: white;
 }
 
-.modal_body {padding: 2px 16px;}
+.modal_body {padding: 2px 5px;}
 
 .close {
     color: #aaa;
@@ -127,7 +127,8 @@ header {
     font-size: 15px;
     text-align: center;
     padding: 0px 5px;
-    margin-bottom: 5px;
+    margin-top: 6px;
+    margin-bottom: 3px;
     border-radius: 4px;
     background-color: #2b1663e0;
     text-shadow: 0 0 2px #9e13e6;
@@ -180,7 +181,13 @@ header {
 .link {color:rgb(218, 216, 214)}
 .urltabbtns {display: flex; justify-content: center; align-items: center; height: 50px; font-weight: bold;}
 .urlt {display: grid; grid-template-rows: 30px; grid-template-columns: 25px 5fr 1fr 1fr; border-radius: 3px; height: fit-content; background-color: rgba(240, 248, 255, 0.384);}
+.modurlt {display: grid; grid-template-rows: 30px; grid-template-columns: 4fr 1fr 1fr 1fr; border-radius: 3px; height: fit-content; background-color: rgba(240, 248, 255, 0.384);}
+.modurltna {display: grid; grid-template-rows: 30px; grid-template-columns: 2fr 3fr 2fr; border-radius: 3px; height: fit-content; background-color: rgba(240, 248, 255, 0.384);}
+.modadd {grid-column:4/5; grid-row:1/2; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; color: #e9e7e5; text-shadow: 0 0 2px #542aa8; border:none; border-radius:3px;}
 .urltitm {display: flex; color: #E9E7E5; justify-content: center; align-items: center; text-align: center; overflow: hidden; font-weight: bold;}
+.murltitm {display: flex; color: #E9E7E5; justify-content: center; align-items: center; text-align: center; overflow: hidden; font-weight: bold; font-size: 17px;}
+.murltitmcd {display: flex; color: #E9E7E5; justify-content: center; align-items: center; text-align: center; overflow: hidden; font-weight: bold; font-size: 17px; grid-row:1/2; grid-column:2/4;}
+.murltitmcdt {display: flex; color:#e9e7e5; justify-content: center; align-items: center; text-align: center; overflow: hidden; font-weight: bold; font-size: 17px; grid-row:1/2; grid-column:1/2;}
 .check {height: 24px; width: 24px;}
 
 .row::after {
@@ -255,6 +262,10 @@ header {
     [class*="col-"] {width: 100%;}
     .hide-large {
         display: none!important
+    }
+
+    .modal_content {
+        width: 90%!important;
     }
 
     .headcolor {border-radius: 30px; background-color: #2a166300;}
