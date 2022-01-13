@@ -1,4 +1,3 @@
-from datetime import date
 from flask import jsonify
 import json
 
@@ -35,9 +34,6 @@ class DatabaseWork:
 
         return {'result':json.dumps({'id':id,'url':rurl}),'tf':tf}
 
-    def searcht(self, sub, num, tim, typ):
-        urls = []
-
     def cd(self, url):
         rurl = {}
         if url[0:4] == 'http':
@@ -46,10 +42,12 @@ class DatabaseWork:
             if cdb == None:
                 print("URL NOT FOUND")
                 rurl = self.praw_dao.search_cd(url)
+                recent = self.db_dao.recentCD()
+                if rurl == "Page No Longer Available/Parsing Fail":
+                    return {'result':"Page No Longer Available", 'recent':recent}
                 title = rurl['title']
                 urls = rurl['urls']
                 id = self.db_dao.insert_cd({'title':title, 'urls': urls, 'url': url})
-                recent = self.db_dao.recentCD()
                 return {'result':json.dumps({'id':id, 'title':title,'url': urls}),'recent':recent}
             else:
                 print("URL FOUND, cd hitcount incremented")
@@ -58,7 +56,7 @@ class DatabaseWork:
                 title = cdb['title']
                 urls = cdb['urls']
                 recent = self.db_dao.recentCD()
-                return {'result':json.dumps({'id':id, 'title':title,'url': urls}),'recent':recent}
+                return {'result':json.dumps({'id':id, 'title':title,'urls': urls}),'recent':recent}
 
         else:
             print("CD TITLE SEARCH")

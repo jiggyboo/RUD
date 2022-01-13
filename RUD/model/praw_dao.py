@@ -34,23 +34,27 @@ class PrawDao:
 
     #Given the URL of Cyberdrop post, returns downloadable urls of each items in the gallery.
     def search_cd(url):
+        print(f'title is {url}')
         r = requests.get(url).text
-        title = r.split('" class="title has-text-centered" title="')[1].split('">')[0]
-        urls = []
-        pics = r.split('downloadUrl: "')
-        for durl in pics[1:]:
-            urls.append(durl.split('",\n')[0])
-        vids = r.split('mp4" data-html')
-        for vurl in vids[1:]:
-            vvurl = vurl.split('href="')[1]
-            url = vvurl.split('" target=')[0]
-            urls.append(url)
-        vids = r.split('<a class="image" href="')
-        for vurl in vids[1:]:
-            vvurl = vurl.split('" target="')[0]
-            urls.append(vvurl)
-            
-        print(len(urls))
+        try:
+            title = r.split('" class="title has-text-centered" title="')[1].split('">')[0]
+            urls = []
+            pics = r.split('downloadUrl: "')
+            for durl in pics[1:]:
+                urls.append(durl.split('",\n')[0])
+            vids = r.split('mp4" data-html')
+            for vurl in vids[1:]:
+                vvurl = vurl.split('href="')[1]
+                url = vvurl.split('" target=')[0]
+                urls.append(url)
+            vids = r.split('<a class="image" href="')
+            for vurl in vids[1:]:
+                vvurl = vurl.split('" target="')[0]
+                if vvurl[-3:] == 'mov':
+                    urls.append(vvurl)
+            print(len(urls))
+        except:
+            return "Page No Longer Available/Parsing Fail"        
 
         return {'title':title,'urls':urls}
 
@@ -67,6 +71,8 @@ class PrawDao:
                     nSubs.add(str(sub))
             elif len(subs)<5:
                 subs.add(str(sub))
+            if len(subs) == 5 and len(nSubs) == 5:
+                break
 
         return {'subs':list(subs),'nSubs':list(nSubs)}
 

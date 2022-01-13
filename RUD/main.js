@@ -38,9 +38,9 @@ $(document).ready(function(){
     // Search Modal //
     document.getElementById("search").onclick = function() { 
 
-        if ($("#sub").val()=="") {
-            alert("Please enter a Subreddit name or Cyberdrop URL");
+        if ($("#sub").val().trim()=="") {
             console.log($("#sub").val());
+            return alert("Please enter a Subreddit name or Cyberdrop URL");
         }
         else {
             modal.style.display = "block";
@@ -370,13 +370,14 @@ $(document).ready(function(){
                     if (type == "modsr") {
                         let title = event.target.parentElement.children[2].innerText;
                         let id = event.target.parentElement.children[4].innerText;
+                        let cd = event.target.parentElement.children[1].innerText;
                         // Find Duplicates in List
                         for (let url of urls) {
                             if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
                                 return alert("Already in list");
                             }
                         }
-                        let cdinfo = [title, uoq, id];
+                        let cdinfo = [title, cd, id];
                         let urlList = temp2['urls'];
                         let urlData = {'subinfo':cdinfo, 'urllist':urlList};
                         console.log(urlData);
@@ -393,6 +394,7 @@ $(document).ready(function(){
                     else {
                         let title = event.target.parentElement.children[2].innerText;
                         let id = event.target.parentElement.children[4].innerText;
+                        let cd = event.target.parentElement.children[1].innerText;
                         // Find Duplicates in List
                         for (let url of urls) {
                             if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
@@ -401,7 +403,7 @@ $(document).ready(function(){
                         }
                         for (let pc of temp) {
                             if (id == pc['id']) {
-                                let cdinfo = [title, uoq, id];
+                                let cdinfo = [title, cd, id];
                                 let urlList = pc['urls'];
                                 let urlData = {'subinfo':cdinfo, 'urllist':urlList};
                                 console.log(urlData);
@@ -423,6 +425,7 @@ $(document).ready(function(){
                     if (type == "modsr") {
                         let title = event.target.parentElement.children[2].innerText;
                         let id = event.target.parentElement.children[4].innerText;
+                        let cd = event.target.parentElement.children[1].innerText;
                         // Find Duplicates in List
                         for (let url of urls) {
                             if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
@@ -431,7 +434,7 @@ $(document).ready(function(){
                         }
                         for (let pc of temp2) {
                             if (id == pc['id']) {
-                                let cdinfo = [title, uoq, id];
+                                let cdinfo = [title, cd, id];
                                 let urlList = pc['urls'];
                                 let urlData = {'subinfo':cdinfo, 'urllist':urlList};
                                 console.log(urlData);
@@ -450,6 +453,7 @@ $(document).ready(function(){
                     else {
                         let title = event.target.parentElement.children[2].innerText;
                         let id = event.target.parentElement.children[4].innerText;
+                        let cd = event.target.parentElement.children[1].innerText;
                         // Find Duplicates in List
                         for (let url of urls) {
                             if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
@@ -458,7 +462,7 @@ $(document).ready(function(){
                         }
                         for (let pc of temp) {
                             if (id == pc['id']) {
-                                let cdinfo = [title, uoq, id];
+                                let cdinfo = [title, cd, id];
                                 let urlList = pc['urls'];
                                 let urlData = {'subinfo':cdinfo, 'urllist':urlList};
                                 console.log(urlData);

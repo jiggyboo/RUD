@@ -264,12 +264,13 @@ class DatabaseDao:
             SELECT
                 id,
                 title,
-                urls
+                urls,
+                url
             FROM
                 cds
             WHERE
                 title
-            CONTAINS :subn
+            LIKE :subn
             ORDER BY
                 hits DESC
             LIMIT  
@@ -285,7 +286,8 @@ class DatabaseDao:
             SELECT
                 id,
                 title,
-                urls
+                urls,
+                url
             FROM
                 cds
             ORDER BY
