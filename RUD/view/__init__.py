@@ -1,4 +1,4 @@
-from flask import request, jsonify, current_app, Response, g
+from flask import request, jsonify, current_app, Response, g, abort
 from flask.json import JSONEncoder
 from functools import wraps
 
@@ -31,6 +31,15 @@ def login_required(f):  #name of the decorator
 def create_endpoints(app, services):
     db_work = services.db_work
     dc_cache = services.dc_cache
+    ip_ban_list = ['128.1.134.181', '178.128.92.95', '36.90.8.75']
+
+    @app.before_request
+    def block_method():
+        ip = request.environ.get('REMOTE_ADDR')
+        if ip in ip_ban_list:
+            print(f'blacklist ip {ip} trying to access website')
+            abort(403)
+
 
     @app.route("/sign-up", methods=['POST'])
     def sign_up():

@@ -85,28 +85,25 @@ class PrawDao:
         sfwtemp = sfwtemp[1].split("data-target-subreddit='")
         sfws = []
         print(len(sfwtemp))
-        for i in range(8):
+        for i in range(24):
             sfws.append(sfwtemp[i+2].split("' data-target-filter")[0])
 
         nsfwtemp = nsfw.split('listing-header">Subscribers')
         nsfwtemp = nsfwtemp[1].split("data-target-subreddit='")
         nsfws = []
-        print(len(nsfwtemp))
-        for i in range(8):
+        for i in range(24):
             nsfws.append(nsfwtemp[i+1].split("' data-target-filter")[0])
 
         sfwgtemp = sfw.split('listing-header">Growth')
         sfwgtemp = sfwgtemp[1].split("data-target-subreddit='")
         sfwg = []
-        print(len(sfwgtemp))
-        for i in range(8):
+        for i in range(24):
             sfwg.append(sfwgtemp[i+1].split("' data-target-filter")[0])
 
         nsfwgtemp = nsfw.split('listing-header">Growth')
         nsfwgtemp = nsfwgtemp[1].split("data-target-subreddit='")
         nsfwg = []
-        print(len(nsfwgtemp))
-        for i in range(8):
+        for i in range(24):
             nsfwg.append(nsfwgtemp[i+1].split("' data-target-filter")[0])
 
         return {'sfw':sfws,'nsfw':nsfws, 'sfwg':sfwg, 'nsfwg':nsfwg}

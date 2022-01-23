@@ -165,8 +165,8 @@ class DatabaseDao:
     def increment_vc_sub(self, subname):
         self.db.execute(text("""
         UPDATE subs
-                SET viewcount = viewcount + 1
-                WHERE sub = :subname
+        SET viewcount = viewcount + 1
+        WHERE sub = :subname
         """), {
                 'subname' : subname
         })
@@ -174,8 +174,8 @@ class DatabaseDao:
     def increment_vc_url(self, id):
         self.db.execute(text("""
         UPDATE urls
-                SET viewcount = viewcount + 1
-                WHERE id = :sub_id
+        SET viewcount = viewcount + 1
+        WHERE id = :sub_id
         """), {
                 'sub_id' : id
         })
@@ -217,7 +217,7 @@ class DatabaseDao:
             ORDER BY
                 hits DESC
             LIMIT
-                5
+                24
             """),{'pnsfw':nsfw}).fetchall()
         for pnsub in pnsubs:
             content = self.db.execute(text("""
