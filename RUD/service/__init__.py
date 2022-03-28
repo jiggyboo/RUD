@@ -1,7 +1,7 @@
 from .db_work import DatabaseWork
-from .dc_cache import DailyContentCache
+from .rst_service import RSTWorker
 
 __all__ = [
     'DatabaseWork',
-    'DailyContentCache'
+    'RSTWorker'
 ]

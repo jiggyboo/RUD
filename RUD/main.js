@@ -1,58 +1,59 @@
 $(document).ready(function(){
     const urls = [];
-    var temp = [];
-    var temp2 = [];
+    temp = [];
+    temp2 = [];
     const res = {recent:[],recentN:[],popular:[],popularN:[],todays:[],todaysN:[]};
-    var modal = document.getElementById("modal");
-    var span = document.getElementsByClassName("close")[0];
+    var modal = $(".modal");
+    var rcd = $("#rcd");
+    var sub = $("#sub");
+    var time = $("#time");
+    var stype = $("#type");
+    var modsr = $("#modsr");
+    var modpr = $("#modpr");
+    var urltab = $("#urls");
 
-    function redoCD() {
-        let x = document.getElementById('rcd').value;
+    // Search Bar Functions //
+    rcd.on("change", function(){
+        let x = rcd.val();
         if (x == "Reddit") {
-            document.getElementById('sub').placeholder = "Subreddit";
-            document.getElementById('time').disabled = false;
-            document.getElementById('type').disabled = false;
+            sub.attr('placeholder', 'Subreddit');
+            time.attr('disabled',  false);
+            stype.attr('disabled',  false);
         }
         else if (x == "CD") {
-            document.getElementById('sub').placeholder = "Cyberdrop";
-            document.getElementById('time').disabled = true;
-            document.getElementById('type').disabled = true;
+            sub.attr('placeholder', 'Cyberdrop');
+            time.attr('disabled',  true);
+            stype.attr('disabled',  true);
         }
-    }
+    });
 
-    document.getElementById('rcd').onchange = redoCD;
-
-    function redType() {
-        let x = $('#type').val();
+    stype.on("change",function(){
+        let x = type.val();
         if (x == "hot" || x == "new") {
-            document.getElementById('time').disabled = true;
+            time.attr('disabled', true);
         }
         else {
-            document.getElementById('time').disabled = false;
+            time.attr('disabled', false);
         }
-    }
-
-    document.getElementById('type').onchange = redType;
-
+    });
 
     // Search Modal //
-    document.getElementById("search").onclick = function() { 
+    $("#search").on("click", function() { 
 
-        if ($("#sub").val().trim()=="") {
-            console.log($("#sub").val());
-            return alert("Please enter a Subreddit name or Cyberdrop URL");
+        if (sub.val().trim()=="") {
+            return alert("Please enter a Subreddit name or Cyberdrop URL.\n입력창에 레딧게시판 이름 또는 CyberDrop URL을 입력하세요.");
         }
         else {
-            modal.style.display = "block";
+            modal.css("display","block");
         }
 
-        let roc = $("#rcd").val();
+        let roc = rcd.val();
 
         // Searching For Reddit //
         if (roc == 'Reddit') {
-            let red = $("#sub").val();
-            let typ = $("#type").val();
-            let tim = $("#time").val();
+            let red = sub.val();
+            let typ = stype.val();
+            let tim = time.val();
             let dData = {};
             if (typ == 'top') {
                 dData = {'sub':red,'typ':typ,'tim':tim};
@@ -62,12 +63,12 @@ $(document).ready(function(){
             }
             $.get('https://rud4u.xyz/api/search', dData)
                 .done((data) => {
+                    console.log(data);
                     temp = JSON.parse(data['tf']);
                     temp2 = JSON.parse(data['result']);
-                    console.log(data);
                     let id = JSON.parse(data['result'])['id'];
                     console.log(id);
-                    $('#modsr').append(
+                    modsr.append(
                         '<div class="modurlt" style="margin:5px" name="ubody">' +
                         '<button class="modadd">Add</button>' +
                         '<div class="murltitm">'+red+'</div>'+'<div class="murltitm">'+typ+'</div>'+'<div class="murltitm">'+tim+'</div>' +
@@ -77,7 +78,7 @@ $(document).ready(function(){
                     for (var pc of JSON.parse(data['tf'])) {
                         console.log(pc);
                         if (pc['id'] != id) {
-                            $('#modpr').append(
+                            modpr.append(
                                 '<div class="modurlt" style="margin:5px" name="ubody">' +
                                 '<button class="modadd">Add</button>' +
                                 '<div class="murltitm">'+red+'</div>'+'<div class="murltitm">'+pc['type']+'</div>'+'<div class="murltitm">'+pc['time']+'</div>' +
@@ -86,8 +87,8 @@ $(document).ready(function(){
                             );
                         }
                     }
-                    if ($("#modpr").children().length == 0) {
-                        $("#modpr").append(
+                    if (modpr.children().length == 0) {
+                        modpr.append(
                             '<div class="modurltna" style="margin:5px" name="ubody">' +
                             '<div class="murltitm">'+'</div>'+'<div class="murltitm">N/A</div>'+'<div class="murltitm"></div>' +
                             '<div style="display:none;"></div>' +
@@ -100,20 +101,19 @@ $(document).ready(function(){
         }
         // Searching For Cyberdrop //
         else {
-            var url = $("#sub").val();
+            var url = sub.val();
             $.get('https://rud4u.xyz/api/cd', {'url':url})
             .done((data) => {
                 console.log(data);
                 //URL Search
                 if (url.includes('https')) {  
                     temp = JSON.parse(data['recent']);
-                    console.log(data);
                     let id = 0;
                     if (data['result'] == "Page No Longer Available") {
-                        alert("Page No Longer Available");
-                        $('#modsr').append(
-                            '<div class="modurlt" style="margin:5px" name="ubody">' +
-                            '<div class="murltitmcd">'+'</div>'+'<div class="murltitmcdt">N/A</div>'+'<div class="murltitm"></div>' +
+                        alert("Page No Longer Available!")
+                        modsr.append(
+                            '<div class="modurltna" style="margin:5px" name="ubody">' +
+                            '<div class="murltitm">'+'</div>'+'<div class="murltitm">N/A</div>'+'<div class="murltitm"></div>' +
                             '<div style="display:none;"></div>' +
                             '</div>'
                         )
@@ -123,7 +123,7 @@ $(document).ready(function(){
                         id = temp2['id'];
                         var title = temp2['title'];
 
-                        $('#modsr').append(
+                        modsr.append(
                             '<div class="modurlt" style="margin:5px" name="ubody">' +
                             '<button class="modadd">Add</button>' +
                             '<div class="murltitmcd">CyberDrop</div><div class="murltitmcdt">'+title+'</div><div class="murltitm"></div>' +
@@ -134,7 +134,7 @@ $(document).ready(function(){
 
                     for (let pc of temp) {
                         if (pc['id'] != id) {
-                            $('#modpr').append(
+                            modpr.append(
                                 '<div class="modurlt" style="margin:5px" name="ubody">' +
                                 '<button class="modadd">Add</button>' +
                                 '<div class="murltitmcd">CyberDrop</div><div class="murltitmcdt">'+pc['title']+'</div><div class="murltitm"></div>' +
@@ -147,21 +147,19 @@ $(document).ready(function(){
                 //Query Search
                 else {
                     temp = JSON.parse(data['recent']);
-                    console.log(data);
-                    if (temp2 == "QUERY NOT FOUND") {
-                        alert("Query Not Found");
-                        $('#modsr').append(
-                            '<div class="modurlt" style="margin:5px" name="ubody">' +
-                            '<div class="murltitmcd">'+'</div>'+'<div class="murltitmcdt">N/A</div>'+'<div class="murltitm"></div>' +
+                    var ids = [];
+                    if (data['result'] == "QUERY NOT FOUND") {
+                        modsr.append(
+                            '<div class="modurltna" style="margin:5px" name="ubody">' +
+                            '<div class="murltitm">'+'</div>'+'<div class="murltitm">N/A</div>'+'<div class="murltitm"></div>' +
                             '<div style="display:none;"></div>' +
                             '</div>'
                         )
                     }
                     else {
                         temp2 = JSON.parse(data['result']);
-                        var ids = [];
                         for (let pc of temp2) {
-                            $('#modsr').append(
+                            modsr.append(
                                 '<div class="modurlt" style="margin:5px" name="ubody">' +
                                 '<button class="modadd">Add</button>' +
                                 '<div class="murltitmcd">CyberDrop</div><div class="murltitmcdt">'+pc['title']+'</div><div class="murltitm"></div>' +
@@ -184,7 +182,7 @@ $(document).ready(function(){
                         if (x != 0) {
                             continue;
                         }
-                        $('#modpr').append(
+                        modpr.append(
                             '<div class="modurlt" style="margin:5px" name="ubody">' +
                             '<button class="modadd">Add</button>' +
                             '<div class="murltitmcd">CyberDrop</div><div class="murltitmcdt">'+pc['title']+'</div><div class="murltitm"></div>' +
@@ -198,23 +196,204 @@ $(document).ready(function(){
             .fail((error) => alert("Server Error Try Again", error))
             .always(() => console.log('Download Tried'));
         }
-    }
+    });
 
-    span.onclick = function() {
-        modal.style.display = "none";
+    $('.close:nth-child(1)').on("click", function(){
+        modal.css("display","none");
         $('#modsr').empty();
         $('#modpr').empty();
-    }
+    })
 
-    window.onclick = function(event) {
-        if (event.target == modal) {
-          modal.style.display = "none";
-          $('#modsr').empty();
-          $('#modpr').empty();
+    $('.modal').on("click", function(e){
+        if (e.target.closest('.modal_content')==null) {
+            modal.css("display","none");
+            $('#modsr').empty();
+            $('#modpr').empty();
         }
-    }
+        // Adding from Search
+        if (e.target.className == 'modadd') {
+            console.log("inside if");
+            // CyberDrop //
+            if (e.target.parentElement.children[1].innerText == 'CyberDrop') {
+                console.log("inside if2");
+                let type = String(e.target.parentElement.parentElement.id);
+                console.log(type);
+                let uoq = $("#sub").val();
+                // URL based Search //
+                if (uoq.includes('http')) {
+                    if (type == "modsr") {
+                        let title = e.target.parentElement.children[2].innerText;
+                        let id = e.target.parentElement.children[4].innerText;
+                        let cd = e.target.parentElement.children[1].innerText;
+                        // Find Duplicates in List
+                        for (let url of urls) {
+                            if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
+                                return alert("Already in list");
+                            }
+                        }
+                        let cdinfo = [title, cd, id];
+                        let urlList = temp2['urls'];
+                        let urlData = {'subinfo':cdinfo, 'urllist':urlList};
+                        console.log(urlData);
+                        urls.push(urlData);
+                        updateLen();
+                        urltab.append(
+                            '<div class="urlt" style="margin:5px" name="ubody">' +
+                            '<input type="checkbox" name="download" checked="checked" class="check">'+
+                            '<div class="urltitm">CyberDrop</div>'+'<div class="urltitm">'+title+'</div>'+'<div class="urltitm"></div>' +
+                            '<div style="display:none;">' + id + '</div>' +
+                            '</div>'
+                        )
+                    }
+                    else {
+                        let title = e.target.parentElement.children[2].innerText;
+                        let id = e.target.parentElement.children[4].innerText;
+                        let cd = e.target.parentElement.children[1].innerText;
+                        // Find Duplicates in List
+                        for (let url of urls) {
+                            console.log("checking for duplicates");
+                            if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
+                                return alert("Already in list");
+                            }
+                        }
+                        for (let pc of temp) {
+                            console.log(pc['id']);
+                            if (id == pc['id']) {
+                                let cdinfo = [title, cd, id];
+                                let urlList = pc['urls'];
+                                let urlData = {'subinfo':cdinfo, 'urllist':urlList};
+                                console.log(urlData);
+                                urls.push(urlData);
+                                updateLen();
+                                urltab.append(
+                                    '<div class="urlt" style="margin:5px" name="ubody">' +
+                                    '<input type="checkbox" name="download" checked="checked" class="check">'+
+                                    '<div class="urltitm">CyberDrop</div>'+'<div class="urltitm">'+title+'</div>'+'<div class="urltitm"></div>' +
+                                    '<div style="display:none;">' + id + '</div>' +
+                                    '</div>'
+                                )
+                            }
+                        }
+                    }
+                }
+                // Title based Search //
+                else {
+                    console.log(type);
+                    if (type == "modsr") {
+                        let title = e.target.parentElement.children[2].innerText;
+                        let id = e.target.parentElement.children[4].innerText;
+                        let cd = e.target.parentElement.children[1].innerText;
+                        // Find Duplicates in List
+                        for (let url of urls) {
+                            if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
+                                return alert("Already in list");
+                            }
+                        }
+                        for (let pc of temp2) {
+                            if (id == pc['id']) {
+                                let cdinfo = [title, cd, id];
+                                let urlList = pc['urls'];
+                                let urlData = {'subinfo':cdinfo, 'urllist':urlList};
+                                console.log(urlData);
+                                urls.push(urlData);
+                                updateLen();
+                                urltab.append(
+                                    '<div class="urlt" style="margin:5px" name="ubody">' +
+                                    '<input type="checkbox" name="download" checked="checked" class="check">'+
+                                    '<div class="urltitm">CyberDrop</div>'+'<div class="urltitm">'+title+'</div>'+'<div class="urltitm"></div>' +
+                                    '<div style="display:none;">' + id + '</div>' +
+                                    '</div>'
+                                )
+                            }
+                        }
+                    }
+                    else {
+                        console.log("in modpr");
+                        let title = e.target.parentElement.children[2].innerText;
+                        let id = e.target.parentElement.children[4].innerText;
+                        let cd = e.target.parentElement.children[1].innerText;
+                        console.log(temp);
+                        // Find Duplicates in List
+                        for (let url of urls) {
+                            if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
+                                return alert("Already in list");
+                            }
+                        }
+                        for (let pc of temp) {
+                            if (id == pc['id']) {
+                                console.log("inside final if");
+                                let cdinfo = [title, cd, id];
+                                let urlList = pc['urls'];
+                                let urlData = {'subinfo':cdinfo, 'urllist':urlList};
+                                console.log(urlData);
+                                urls.push(urlData);
+                                updateLen();
+                                urltab.append(
+                                    '<div class="urlt" style="margin:5px" name="ubody">' +
+                                    '<input type="checkbox" name="download" checked="checked" class="check">'+
+                                    '<div class="urltitm">CyberDrop</div>'+'<div class="urltitm">'+title+'</div>'+'<div class="urltitm"></div>' +
+                                    '<div style="display:none;">' + id + '</div>' +
+                                    '</div>'
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            // Reddit //
+            else {
+                console.log(e.target.parentElement.parentElement)
+                let type = String(e.target.parentElement.parentElement.id);
+                var id = e.target.parentElement.children[4].innerText;
+                var sub = e.target.parentElement.children[1].innerText;
+                var typ = e.target.parentElement.children[2].innerText;
+                var tim = e.target.parentElement.children[3].innerText;
+                for (let url of urls) {
+                    if (url['subinfo'][3]==id) {
+                        return alert("Already in list");
+                    }
+                }
+                if (type == 'modsr') {
+                    var urllist = temp2['url'];
+                    var subinfo = [sub, typ, tim, id];
+                    var urlData = {'subinfo':subinfo, 'urllist':urllist};
+                    urls.push(urlData);
+                    updateLen();
+                    console.log(urls.length);
+                    urltab.append(
+                        '<div class="urlt" style="margin:5px" name="ubody">' +
+                        '<input type="checkbox" name="download" checked="checked" class="check">'+
+                        '<div class="urltitm">'+sub+'</div>'+'<div class="urltitm">'+typ+'</div>'+'<div class="urltitm">'+tim+'</div>' +
+                        '<div style="display:none;">' + id + '</div>' +
+                        '</div>'
+                    )
+                }
+                else {
+                    for (let url of temp) {
+                        if (url['id']==id) {
+                            var urllist = url['urls'];
+                            var subinfo = [sub, typ, tim, id];
+                            var urlData = {'subinfo':subinfo, 'urllist':urllist};
+                            urls.push(urlData);
+                            updateLen();
+                            console.log(urls.length);
+            
+                            urltab.append(
+                                '<div class="urlt" style="margin:5px" name="ubody">' +
+                                '<input type="checkbox" name="download" checked="checked" class="check">'+
+                                '<div class="urltitm">'+sub+'</div>'+'<div class="urltitm">'+typ+'</div>'+'<div class="urltitm">'+tim+'</div>' +
+                                '<div style="display:none;">' + id + '</div>' +
+                                '</div>'
+                            )
+                        }
+                    }    
+                }
+            }
+                
+        }
+    })
 
-    document.getElementById("del").onclick = del;
+    $("#del").on("click", del);
 
     function del() {
         var checkboxes = document.getElementsByName("download");
@@ -246,12 +425,12 @@ $(document).ready(function(){
         document.getElementById("listlen").innerText = urls.length;
     }
 
-    document.getElementById('downUrl').onclick = downUrl;
+    $('#downUrl').on("click", downUrl);
 
     function downUrl() {
         if (urls.length == 0) {
             console.log("list empty");
-            return alert("Your list is empty!");
+            return alert("Your list is empty!\nPlease add some items to download.\n다운로드할 자료가 없습니다.");
         }
         var blob = new Blob([JSON.stringify(urls)],{type:"text/plain;charset=utf-8"});
         console.log(urls);
@@ -326,11 +505,10 @@ $(document).ready(function(){
             })
     }
 
-    document.body.addEventListener('click', event => {
-
+    document.body.addEventListener('click', e => {
         // Adding from Recent/Popular
-        if (event.target.className == 'postadd') {
-            let id = String(event.target.parentElement.id);
+        if (e.target.className == 'postadd') {
+            let id = String(e.target.parentElement.id);
             let type = id.slice(0,-1);
             let index = id.slice(-1);
             id = res[type][index]['id'];
@@ -350,7 +528,7 @@ $(document).ready(function(){
             updateLen();
             console.log(urls.length);
 
-            $('#urls').append(
+            urltab.append(
                 '<div class="urlt" style="margin:5px" name="ubody">' +
                 '<input type="checkbox" name="download" checked="checked" class="check">'+
                 '<div class="urltitm">'+sub+'</div>'+'<div class="urltitm">'+typ+'</div>'+'<div class="urltitm">'+tim+'</div>' +
@@ -358,182 +536,10 @@ $(document).ready(function(){
                 '</div>'
             )
         }
-
-        // Adding from Search
-        if (event.target.className == 'modadd') {
-            // CyberDrop //
-            if (event.target.parentElement.children[1].innerText == 'CyberDrop') {
-                let type = String(event.target.parentElement.parentElement.id);
-                let uoq = $('#sub').val();
-                // URL based Search //
-                if (uoq.includes('http')) {
-                    if (type == "modsr") {
-                        let title = event.target.parentElement.children[2].innerText;
-                        let id = event.target.parentElement.children[4].innerText;
-                        let cd = event.target.parentElement.children[1].innerText;
-                        // Find Duplicates in List
-                        for (let url of urls) {
-                            if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
-                                return alert("Already in list");
-                            }
-                        }
-                        let cdinfo = [title, cd, id];
-                        let urlList = temp2['urls'];
-                        let urlData = {'subinfo':cdinfo, 'urllist':urlList};
-                        console.log(urlData);
-                        urls.push(urlData);
-                        updateLen();
-                        $('#urls').append(
-                            '<div class="urlt" style="margin:5px" name="ubody">' +
-                            '<input type="checkbox" name="download" checked="checked" class="check">'+
-                            '<div class="urltitm">CyberDrop</div>'+'<div class="urltitm">'+title+'</div>'+'<div class="urltitm"></div>' +
-                            '<div style="display:none;">' + id + '</div>' +
-                            '</div>'
-                        )
-                    }
-                    else {
-                        let title = event.target.parentElement.children[2].innerText;
-                        let id = event.target.parentElement.children[4].innerText;
-                        let cd = event.target.parentElement.children[1].innerText;
-                        // Find Duplicates in List
-                        for (let url of urls) {
-                            if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
-                                return alert("Already in list");
-                            }
-                        }
-                        for (let pc of temp) {
-                            if (id == pc['id']) {
-                                let cdinfo = [title, cd, id];
-                                let urlList = pc['urls'];
-                                let urlData = {'subinfo':cdinfo, 'urllist':urlList};
-                                console.log(urlData);
-                                urls.push(urlData);
-                                updateLen();
-                                $('#urls').append(
-                                    '<div class="urlt" style="margin:5px" name="ubody">' +
-                                    '<input type="checkbox" name="download" checked="checked" class="check">'+
-                                    '<div class="urltitm">CyberDrop</div>'+'<div class="urltitm">'+title+'</div>'+'<div class="urltitm"></div>' +
-                                    '<div style="display:none;">' + id + '</div>' +
-                                    '</div>'
-                                )
-                            }
-                        }
-                    }
-                }
-                // Title based Search //
-                else {
-                    if (type == "modsr") {
-                        let title = event.target.parentElement.children[2].innerText;
-                        let id = event.target.parentElement.children[4].innerText;
-                        let cd = event.target.parentElement.children[1].innerText;
-                        // Find Duplicates in List
-                        for (let url of urls) {
-                            if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
-                                return alert("Already in list");
-                            }
-                        }
-                        for (let pc of temp2) {
-                            if (id == pc['id']) {
-                                let cdinfo = [title, cd, id];
-                                let urlList = pc['urls'];
-                                let urlData = {'subinfo':cdinfo, 'urllist':urlList};
-                                console.log(urlData);
-                                urls.push(urlData);
-                                updateLen();
-                                $('#urls').append(
-                                    '<div class="urlt" style="margin:5px" name="ubody">' +
-                                    '<input type="checkbox" name="download" checked="checked" class="check">'+
-                                    '<div class="urltitm">CyberDrop</div>'+'<div class="urltitm">'+title+'</div>'+'<div class="urltitm"></div>' +
-                                    '<div style="display:none;">' + id + '</div>' +
-                                    '</div>'
-                                )
-                            }
-                        }
-                    }
-                    else {
-                        let title = event.target.parentElement.children[2].innerText;
-                        let id = event.target.parentElement.children[4].innerText;
-                        let cd = event.target.parentElement.children[1].innerText;
-                        // Find Duplicates in List
-                        for (let url of urls) {
-                            if (url['subinfo'][2]==id && url['subinfo'].length == 3) {
-                                return alert("Already in list");
-                            }
-                        }
-                        for (let pc of temp) {
-                            if (id == pc['id']) {
-                                let cdinfo = [title, cd, id];
-                                let urlList = pc['urls'];
-                                let urlData = {'subinfo':cdinfo, 'urllist':urlList};
-                                console.log(urlData);
-                                urls.push(urlData);
-                                updateLen();
-                                $('#urls').append(
-                                    '<div class="urlt" style="margin:5px" name="ubody">' +
-                                    '<input type="checkbox" name="download" checked="checked" class="check">'+
-                                    '<div class="urltitm">CyberDrop</div>'+'<div class="urltitm">'+title+'</div>'+'<div class="urltitm"></div>' +
-                                    '<div style="display:none;">' + id + '</div>' +
-                                    '</div>'
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            // Reddit //
-            else {
-                let type = String(event.target.parentElement.parentElement.id);
-                var id = event.target.parentElement.children[4].innerText;
-                var sub = event.target.parentElement.children[1].innerText;
-                var typ = event.target.parentElement.children[2].innerText;
-                var tim = event.target.parentElement.children[3].innerText;
-                for (let url of urls) {
-                    if (url['subinfo'][3]==id) {
-                        return alert("Already in list");
-                    }
-                }
-                if (type == 'modsr') {
-                    var urllist = temp2['url'];
-                    var subinfo = [sub, typ, tim, id];
-                    var urlData = {'subinfo':subinfo, 'urllist':urllist};
-                    urls.push(urlData);
-                    updateLen();
-                    console.log(urls.length);
-                    $('#urls').append(
-                        '<div class="urlt" style="margin:5px" name="ubody">' +
-                        '<input type="checkbox" name="download" checked="checked" class="check">'+
-                        '<div class="urltitm">'+sub+'</div>'+'<div class="urltitm">'+typ+'</div>'+'<div class="urltitm">'+tim+'</div>' +
-                        '<div style="display:none;">' + id + '</div>' +
-                        '</div>'
-                    )
-                }
-                else {
-                    for (let url of temp) {
-                        if (url['id']==id) {
-                            var urllist = url['urls'];
-                            var subinfo = [sub, typ, tim, id];
-                            var urlData = {'subinfo':subinfo, 'urllist':urllist};
-                            urls.push(urlData);
-                            updateLen();
-                            console.log(urls.length);
-            
-                            $('#urls').append(
-                                '<div class="urlt" style="margin:5px" name="ubody">' +
-                                '<input type="checkbox" name="download" checked="checked" class="check">'+
-                                '<div class="urltitm">'+sub+'</div>'+'<div class="urltitm">'+typ+'</div>'+'<div class="urltitm">'+tim+'</div>' +
-                                '<div style="display:none;">' + id + '</div>' +
-                                '</div>'
-                            )
-                        }
-                    }    
-                }
-            }
-                
-        }
     })
 
     document.getElementById('hidepanelY').onclick = function() {
-        document.getElementById('hidepanel').style.display = "none";
+        document.getElementById('hidepanel').style.display = "";
     }
 
     document.getElementById('hidepanelN').onclick = function() {
@@ -564,7 +570,7 @@ $(document).ready(function(){
     y.addEventListener("change", chLength2);
 
     function addUrlRed(red, typ, tim, id) {
-        $('#urls').append(
+        urltab.append(
             '<div class="urlt" style="margin:5px" name="ubody">' +
             '<input type="checkbox" name="download" checked="checked" class="check">'+
             '<div class="urltitm">'+red+'</div>'+'<div class="urltitm">'+typ+'</div>'+'<div class="urltitm">'+tim+'</div>' +
@@ -574,7 +580,7 @@ $(document).ready(function(){
     }
 
     function addUrlCD(title, id) {
-        $('#urls').append(
+        urltab.append(
             '<div class="urlt" style="margin:5px" name="ubody">' +
             '<input type="checkbox" name="download" checked="checked" class="check">'+
             '<div class="urltitm">CyberDrop</div><div class="urltitm">'+title+'</div><div class="urltitm"></div>' +
@@ -583,7 +589,7 @@ $(document).ready(function(){
         )
     }
 
-    document.getElementById('head').onclick = function() {
+    $('#head').on("click",function() {
         let width = window.innerWidth;
         if (width < 768) {
             $('.transform').toggleClass('transform-active');
@@ -593,9 +599,8 @@ $(document).ready(function(){
         else {
             console.log("not mobile");
         }
-    };
+    });
 
     dcnt();
 
 });
-

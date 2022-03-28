@@ -11,7 +11,6 @@ class DatabaseDao:
         dates = [tdate+" 00:00:00", tdate+" 23:59:59"]
         return dates
 
-
     def getT_url(self, url):
         sdate = self.dateToDT()
         rurl = self.db.execute(text("""
@@ -63,15 +62,17 @@ class DatabaseDao:
                 urls,
                 type,
                 time
-            FROM urls
-            WHERE id = :pid
+            FROM
+                urls
+            WHERE
+                id = :pid
         """),{'pid':id}).fetchone()
 
         return content
 
     def get_sub(self, sub):
         subn = self.db.execute(text("""
-        SELECT 
+        SELECT
             sub
         FROM subs
         WHERE sub = :sub_name
@@ -153,6 +154,24 @@ class DatabaseDao:
             'sub_id' : id
         })
 
+    def increment_vc_sub(self, subname):
+            self.db.execute(text("""
+            UPDATE subs
+                    SET viewcount = viewcount + 1
+                    WHERE sub = :subname
+            """), {
+                    'subname' : subname
+            })
+
+    def increment_vc_url(self, id):
+            self.db.execute(text("""
+            UPDATE urls
+                    SET viewcount = viewcount + 1
+                    WHERE id = :sub_id
+            """), {
+                    'sub_id' : id
+            })
+
     def increment_hits_cd(self, id):
         self.db.execute(text("""
         UPDATE cds
@@ -162,24 +181,6 @@ class DatabaseDao:
             'cd_id' : id
         })
 
-    def increment_vc_sub(self, subname):
-        self.db.execute(text("""
-        UPDATE subs
-        SET viewcount = viewcount + 1
-        WHERE sub = :subname
-        """), {
-                'subname' : subname
-        })
-
-    def increment_vc_url(self, id):
-        self.db.execute(text("""
-        UPDATE urls
-        SET viewcount = viewcount + 1
-        WHERE id = :sub_id
-        """), {
-                'sub_id' : id
-        })
-    
     #Recently Added URLs
     def recents(self, nsfw):
         recents = []
@@ -193,7 +194,7 @@ class DatabaseDao:
             FROM
                 urls
             WHERE
-                nsfw = :pnsfw                
+                nsfw = :pnsfw
             ORDER BY
                 id DESC
             LIMIT
@@ -237,6 +238,7 @@ class DatabaseDao:
             populars.append(content._asdict())
         return json.dumps(populars)
 
+
     def topFive(self, sub):
         topFive = []
         content = self.db.execute(text("""
@@ -273,11 +275,13 @@ class DatabaseDao:
             LIKE :subn
             ORDER BY
                 hits DESC
-            LIMIT  
+            LIMIT
                 5
         """),{'subn':sub}).fetchall()
         for post in content:
             topFive.append(post._asdict())
+        if len(topFive) == 0:
+            return None
         return json.dumps(topFive)
 
     def recentCD(self):
@@ -298,3 +302,48 @@ class DatabaseDao:
         for post in content:
             recent.append(post._asdict())
         return json.dumps(recent)
+
+
+    ######### Reddit Stock Tracker Methods #########
+
+    # Multiple Stock rows Insertion
+    def insertSI(self, stocks):
+        with self.db.connect() as connection:
+            return connection.executemany(text("""
+                INSERT INTO stocks (
+                    ticker,
+                    fullName,
+                    sentiment,
+                    subjectivity,
+                    count,
+                    todayPrice,
+                    timestamp
+                ) VALUES (
+                    :ticker,
+                    :fullName,
+                    :sentiment,
+                    :subjectivity,
+                    :count,
+                    :todayPrice,
+                    :timestamp
+                    )
+            """), Stocks).lastrowid
+
+    # Grab a month long stock info
+    def fetchSI(self, num):
+        with self.db.connect() as connection:
+            return connection.execute(text("""
+                SELECT
+                    ticker,
+                    fullName,
+                    sentiment,
+                    subjectivity,
+                    count,
+                    todayPrice,
+                    volume,
+                    timestamp
+                FROM
+                    stocks
+                ORDER BY
+                    timestamp DESC
+            """)).fetchall()

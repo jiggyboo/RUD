@@ -44,11 +44,11 @@ class DatabaseWork:
                 rurl = self.praw_dao.search_cd(url)
                 recent = self.db_dao.recentCD()
                 if rurl == "Page No Longer Available/Parsing Fail":
-                    return {'result':"Page No Longer Available", 'recent':recent}
+                    return {'result':"Page No Longer Available",'recent':recent}
                 title = rurl['title']
                 urls = rurl['urls']
                 id = self.db_dao.insert_cd({'title':title, 'urls': urls, 'url': url})
-                return {'result':json.dumps({'id':id, 'title':title,'url': urls}),'recent':recent}
+                return {'result':json.dumps({'id':id, 'title':title,'urls': urls}),'recent':recent}
             else:
                 print("URL FOUND, cd hitcount incremented")
                 id = cdb['id']
@@ -69,11 +69,3 @@ class DatabaseWork:
                 print("QUERY FOUND")
                 recent = self.db_dao.recentCD()
                 return {'result':cdb,'recent':recent}
-
-
-                
-
-
-
-
-

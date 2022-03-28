@@ -14,6 +14,9 @@ class PrawDao:
         sub = self.praw.subreddit(sub)
         return sub.over18
 
+    def returnPraw(self):
+        return self.praw
+
     #Returns URLs of media in a subreddit
     def search_sub(self, sub, tim, type, num = 30):
         urls = []
@@ -28,12 +31,12 @@ class PrawDao:
             try:
                 urls.append(post.url)
             except:
-                print("failed")
+                print("adding url failed")
                 pass
-        return urls
+        return str(urls)
 
     #Given the URL of Cyberdrop post, returns downloadable urls of each items in the gallery.
-    def search_cd(url):
+    def search_cd(self, url):
         print(f'title is {url}')
         r = requests.get(url).text
         try:
@@ -52,12 +55,13 @@ class PrawDao:
                 vvurl = vurl.split('" target="')[0]
                 if vvurl[-3:] == 'mov':
                     urls.append(vvurl)
+                if vvurl[-3:] == 'mp4' and vvurl not in urls:
+                    urls.append(vvurl)
             print(len(urls))
         except:
-            return "Page No Longer Available/Parsing Fail"        
+            return "Page No Longer Available/Parsing Fail"
 
-        return {'title':title,'urls':urls}
-
+        return {'title':title,'urls':str(urls)}
 
     #Finds top 5 of non-NSFW and NSFW subs from the currently hot subs on reddit.
     def topFive(self):
@@ -84,7 +88,6 @@ class PrawDao:
         sfwtemp = sfw.split('listing-header">Subscribers')
         sfwtemp = sfwtemp[1].split("data-target-subreddit='")
         sfws = []
-        print(len(sfwtemp))
         for i in range(24):
             sfws.append(sfwtemp[i+2].split("' data-target-filter")[0])
 
