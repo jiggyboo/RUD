@@ -22,7 +22,6 @@ def login_required(f):  #name of the decorator
 
 			user_id = payload['user_id']
 			g.user_id = user_id
-			g.user = get_user(user_id) if user_id else None
 		else:
 			return Response(status=401)
 
@@ -44,8 +43,8 @@ def create_endpoints(app, services):
     @app.route("/sign-up", methods=['POST'])
     def sign_up():
         new_user = request.json
-        new_user_id = user_service.create_new_user(new_user)
-        new_user = user_service.get_user(new_user_id)
+        new_user_id = db_work.create_new_user(new_user)
+        new_user = db_work.get_user(new_user_id)
 
         return jsonify(new_user)
 
@@ -86,3 +85,42 @@ def create_endpoints(app, services):
     @app.route("/rst/api/dcnt", methods=['GET'])
     def rst_dcnt():
         return rst_worker.rstDCNT()
+
+    @app.route("/rst/api/register", methods=['POST'])
+    def rst_register():
+        return jsonify(db_work.create_user(request.json))
+
+
+    @app.route("/rst/api/login", methods=['POST'])
+    def rst_login():
+        credential = request.json
+        authroized = db_work.login(credential)
+        if authroized:
+            user_credential = db_work.get_user_id_password(credential['email'])
+            user_id = user_credential['user_id']
+            token = db_work.generate_token(user_id)
+            return jsonify({
+                'user_id' :user_id,
+                'token' : token
+            })
+        else:
+            return '', 401
+
+    @app.route("/rst/api/follow", methods=['POST'])
+    @login_required
+    def rst_follow():
+        user_id = g.user_id
+        ticker = request.json['ticker']
+        return db_work.follow_stock(user_id, ticker)
+
+    @app.route("/rst/api/unfollow", methods=['POST'])
+    @login_required
+    def rst_unfollow():
+        user_id = g.user_id
+        ticker = request.json['ticker']
+        return db_work.unfollow_stock(user_id, ticker)
+
+    @app.route("/rst/api/forgot", methods=['POST'])
+    def rst_forgot():
+        email = request.json['email']
+        return db_work.forgot_password(email)

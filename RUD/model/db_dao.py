@@ -1,6 +1,6 @@
 import json
 from sqlalchemy import text
-from datetime import date
+from datetime import date, timedelta
 
 class DatabaseDao:
     def __init__(self, database):
@@ -11,6 +11,12 @@ class DatabaseDao:
         dates = [tdate+" 00:00:00", tdate+" 23:59:59"]
         return dates
 
+    def getToDate(self):
+        tdate = date.today()
+        todate = str(tdate-timedelta(days=29))
+        dates = [todate+" 00:00:00", str(tdate)+" 23:59:59"]
+        return dates
+        
     def getT_url(self, url):
         sdate = self.dateToDT()
         rurl = self.db.execute(text("""
@@ -305,6 +311,42 @@ class DatabaseDao:
 
 
     ######### Reddit Stock Tracker Methods #########
+    
+    ## User Info Manipulation
+
+    # Insert a new user into the database.
+    def insert_user(self, user):
+        with self.db.connect() as connection:
+            return connection.execute(text("""
+                INSERT INTO user (
+                    email,
+                    password,
+                    name
+                ) VALUES (
+                    :email,
+                    :password,
+                    :name
+                )
+            """), user).lastrowid
+    
+    # Grab user information for user authentication.
+    def get_user_id_password(self, email):
+        with self.db.connect() as connection:
+            row = connection.execute(text("""
+                SELECT
+                    id,
+                    password
+                FROM
+                    user
+                WHERE
+                    email = :email
+            """), {'email':email}).fetchone()
+            return {
+                'id': row['id'],
+                'password': row['password']
+            } if row else None
+
+    ## Content Manipulation
 
     # Multiple Stock rows Insertion
     def insertSI(self, stocks):
@@ -327,7 +369,7 @@ class DatabaseDao:
                     :todayPrice,
                     :timestamp
                     )
-            """), Stocks).lastrowid
+            """), stocks).lastrowid
 
     # Grab a month long stock info
     def fetchSI(self, num):
@@ -347,3 +389,62 @@ class DatabaseDao:
                 ORDER BY
                     timestamp DESC
             """)).fetchall()
+
+    # Follow a Ticker
+    def follow(self, ticker, user_id):
+        with self.db.connect() as connection:
+            return connection.execute(text("""
+                INSERT INTO following_ticker (
+                    ticker,
+                    user_id
+                ) VALUES (
+                    :ticker,
+                    :user_id
+                )
+            """), {'ticker':ticker, 'user_id':user_id}).lastrowid
+
+    # Unfollow a Ticker
+    def unfollow(self, ticker, user_id):
+        with self.db.connect() as connection:
+            return connection.execute(text("""
+                DELETE FROM following_ticker
+                WHERE ticker = :ticker AND user_id = :user_id
+                """), {'ticker':ticker, 'user_id':user_id}).lastrowid
+
+    # Fetch All the following Tickers for certain user
+    def fetchFollowing(self, user_id):
+        content = []
+        with self.db.connect() as connection:
+            data = connection.execute(text("""
+                SELECT
+                    ticker
+                FROM
+                    following_ticker
+                WHERE
+                    user_id = :user_id
+                """), {'user_id':user_id}).fetchall()
+            for post in data:
+                content.append(post['ticker'])
+
+        return content
+
+    # Grab stock info of all the stocks a user is following
+    def fetchSI_personal(self, user_id):
+        dates = self.getToDate()
+        content = []
+        with self.db.connect() as connection:
+            data = connection.execute(text("""
+                SELECT
+                 *
+                FROM
+                    stocks
+                WHERE
+                    ticker IN (SELECT ticker FROM following_ticker WHERE user_id = :user_id)
+                    AND timestamp >= :dateA AND timestamp <= :dateB
+                ORDER BY
+                    ticker, timestamp DESC
+                """), {'user_id':user_id, 'dateA':dates[0], 'dateB':dates[1]}).fetchall()
+            for post in data:
+                content.append(post._asdict())
+            
+        return content

@@ -1,5 +1,8 @@
 from flask import jsonify
 import json
+import jwt
+import bcrypt
+from datetime import datetime, timedelta
 
 class DatabaseWork:
 
@@ -69,3 +72,56 @@ class DatabaseWork:
                 print("QUERY FOUND")
                 recent = self.db_dao.recentCD()
                 return {'result':cdb,'recent':recent}
+
+    ## User Info Manipulation
+
+    def create_user(self, user_info):
+        hashed_password = bcrypt.hashpw(user_info['password'].encode('utf-8'), bcrypt.gensalt())
+        user_id = self.db_dao.insert_user({
+            'email': user_info['email'], 
+            'password': hashed_password, 
+            'name': user_info['name']
+        })
+        
+        return user_id
+
+    def login(self, credential):
+        email = credential['email']
+        password = credential['password']
+        user_credential = self.db_dao.get_user_id_password(email)
+        authorized = user_credential and bcrypt.checkpw(password.encode('utf-8'), user_credential['password'].encode('utf-8'))
+
+        return authorized
+
+    def generate_token(self, user_id):
+        payload = {
+            'user_id': user_id,
+            'exp': datetime.utcnow() + timedelta(minutes=60*24)
+        }
+        token = jwt.encode(payload, self.config['JWT_SECRET_KEY'], algorithm='HS256')
+
+        return token.decode('utf-8')
+
+    def get_user_id_and_password(self, email):
+
+        return self.db_dao.get_user_id_password(email)
+
+    def follow_stock(self, user_id, ticker):
+
+        return self.db_dao.follow({'ticker': ticker, 'user_id': user_id})
+
+    def unfollow_stock(self, user_id, ticker):
+
+        return self.db_dao.unfollow({'ticker': ticker, 'user_id': user_id})
+    
+    def fetch_personal(self, user_id):
+        
+        follows = json.load(self.db_dao.fetchFollowing(user_id))
+        self.personalContent = {}
+        for f in follows:
+            self.personalContent[f['ticker']] = []
+        data = self.db_dao.fetchSI_personal(user_id)
+        for d in data:
+            self.personalContent[d['ticker']].append(d)
+
+        return self.personalContent

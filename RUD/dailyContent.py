@@ -2,7 +2,7 @@ from textblob import TextBlob
 from datetime import datetime, timedelta, date
 import urllib.request as rq
 import praw
-from pandas_datareader import data as pdr
+import pandas_datareader as pdr
 import json
 import sqlalchemy as sa
 from praw_info import prawInfo
@@ -53,6 +53,9 @@ class RSTWorker:
             f.close()
             print('Stock Cache useable')
         self.scrape()
+        self.saveData()
+        self.updateScores()
+        self.saveSmallData()
 
         #Daily Content
         self.dailyContent = {'recent':[],'recentN':[],'pops':[],'popsN':[],'todays':[],'todaysN':[]}
@@ -91,6 +94,11 @@ class RSTWorker:
         dates = [todate+" 00:00:00", tdate+" 23:59:59"]
         return dates
 
+    def dateToTD(self):
+        today = str(date.today())
+        dates = [today+" 00:00:00", today+" 23:59:59"]
+        return dates
+
     def scrape(self):
         start = datetime.now()
         for sub in self.reddits:
@@ -120,11 +128,47 @@ class RSTWorker:
         print(self.stocks)
         print(self.fetchSI())
 
+    # Save Month Long Data for popular tickers only.
+    def saveSmallData(self):
+        tickers = self.fetchAllSI()
+        tickerSet = set()
+        timerange = self.dateToDT()
+        for ticker in tickers:
+            print(ticker)
+            for row in tickers[ticker]:
+                print(row)
+                tickerSet.add(row['ticker'])
+        tickerList = list(tickerSet)
+        format_strings = ','.join(['%s'] * len(tickerList))
+        data = {}
+        for ticker in tickerList:
+            data[ticker] = []
+        query = ("SELECT ticker, fullName, sentiment, subjectivity, count, price, volume, timestamp FROM stocks WHERE ticker IN (%s) AND timestamp >= %%s AND timestamp <= %%s ORDER BY ticker, timestamp DESC" % format_strings)
+        with self.db.connect() as connection:
+            temp = connection.execute(query, tuple(tickerList)+(timerange[0],timerange[1])).fetchall()
+            for row in temp:
+                data[row[0]].append(row._asdict())
+        writedata = {"ranks": tickers, "data":data}
+        with open("/home/ubuntu/var/www/rud.com/rst/lcnt.json", "w") as f:
+            json.dump(writedata, f, default=str)
+            
+
+    # Save Month Long Data to a JSON file at frontend location.
+    def saveData(self):
+        data = self.fetchSI()
+        print(type(data))
+        stockData = {}
+        for ticker in self.tickersCache:
+            stockData[ticker] = []
+        for item in data:
+            stockData[item[0]].append(item._asdict())
+
+        with open("/home/ubuntu/var/www/rud.com/rst/stockdata.json", "w") as f :
+            f.write(json.dumps(stockData, default = str))
 
     # Check sentiment and subjectivity of stock.
     def sentimeter(self, text) :
         senti = TextBlob(text).sentiment
-        print(text)
         for word in text.split():
             if word in self.tickers :
                 if word in self.blacklist:
@@ -145,12 +189,12 @@ class RSTWorker:
 
     # Using Yahoo's finance API, updates closed price and volume for collected stocks in batch and saves list of tickers to sicache.txt
     def updateTickersBatch(self):
+        print(self.now)
         try:
-            tickerList = pdr.DataReader(
+            tickerList = pdr.get_data_yahoo(
                 self.tickersCache,
                 start = self.now-timedelta(days=1),
-                end = self.now,
-                data_source='yahoo')
+                end = self.now)
 
             # Replacing NaN with 0 to prevent error during DB Insertion
             tickerList = tickerList.fillna(0)
@@ -231,11 +275,209 @@ class RSTWorker:
                 WHERE
                     timestamp >= :dateA AND timestamp <= :dateB
                 ORDER BY
-                    timestamp DESC
+                    ticker, timestamp DESC
             """), {'dateA':date[0], 'dateB':date[1]}).fetchall()
 
+    # Fetch a list of tickers(dict) with highest count today
+    def fetchTopCountSI(self, update=False):
+        ranks = []
+        date = self.dateToTD()
+        with self.db.connect() as connection:
+            data = connection.execute(sa.text("""
+                SELECT
+                    ticker,
+                    fullName,
+                    count
+                FROM
+                    stocks
+                WHERE
+                    timestamp >= :dateA AND timestamp <= :dateB
+                ORDER BY
+                    count DESC
+                LIMIT
+                    30
+            """), {'dateA':date[0], 'dateB':date[1]}).fetchall()
+            for row in data:
+                ranks.append(row._asdict())
+            if update:
+                i = 0
+                for row in ranks:
+                    row['count'] = int(row['count'])
+                    score = 6 - (i//5)
+                    i += 1
+                    try:
+                        connection.execute(sa.text(f"UPDATE stocks SET count_score = count_score + {str(score)} WHERE ticker = '{row['ticker']}';"))
+                    except Exception as e:
+                        print(f"Error updating count_score: {e}")
+            return ranks
 
-        ###RUD###
+    # Fetch a list of tickers(dict) with highest sentiment today
+    def fetchTopSentimentSI(self, update=False):
+        ranks = []
+        date = self.dateToTD()
+        with self.db.connect() as connection:
+            data = connection.execute(sa.text("""
+                SELECT
+                    ticker,
+                    fullName,
+                    sentiment
+                FROM
+                    stocks
+                WHERE
+                    timestamp >= :dateA AND timestamp <= :dateB
+                ORDER BY
+                    sentiment DESC
+                LIMIT
+                    30
+            """), {'dateA':date[0], 'dateB':date[1]}).fetchall()
+            for row in data:
+                ranks.append(row._asdict())
+            if update:
+                i = 0
+                for row in ranks:
+                    row['count'] = int(row['count'])
+                    score = 6 - (i//5)
+                    i += 1
+                    try:
+                        connection.execute(sa.text(f"UPDATE stocks SET sentiment_score = sentiment_score + {str(score)} WHERE ticker = '{row['ticker']}'"))
+                    except Exception as e:
+                        print(f"Error updating sentiment_score: {e}")
+            return ranks
+
+    # Fetch a list of tickers(dict) with highest follower today
+    def fetchTopFollowerSI(self):
+        ranks = []
+        date = self.dateToTD()
+        with self.db.connect() as connection:
+            data = connection.execute(sa.text("""
+                SELECT
+                    ticker,
+                    full_name,
+                    follower_count
+                FROM
+                    ticker_follow
+                ORDER BY
+                    follower_count DESC
+                LIMIT
+                    30
+            """), {'dateA':date[0], 'dateB':date[1]}).fetchall()
+            for row in data:
+                ranks.append(row._asdict())
+            return ranks
+
+    # Fetch a list of tickers(dict) with highest sentiment ranking score today
+    def fetchTopSentimentScoreSI(self):
+        ranks = []
+        date = self.dateToTD()
+        with self.db.connect() as connection:
+            data = connection.execute(sa.text("""
+                SELECT
+                    ticker,
+                    full_name,
+                    sentiment_score
+                FROM
+                    ticker_follow
+                ORDER BY
+                    sentiment_score DESC
+                LIMIT
+                    30
+            """), {'dateA':date[0], 'dateB':date[1]}).fetchall()
+            for row in data:
+                ranks.append(row._asdict())
+            return ranks
+
+    # Fetch a list of tickers(dict) with highest count ranking score today
+    def fetchTopCountScoreSI(self):
+        ranks = []
+        date = self.dateToTD()
+        with self.db.connect() as connection:
+            data = connection.execute(sa.text("""
+                SELECT
+                    ticker,
+                    full_name,
+                    count_score
+                FROM
+                    ticker_follow
+                ORDER BY
+                    count_score DESC
+                LIMIT
+                    30
+            """), {'dateA':date[0], 'dateB':date[1]}).fetchall()
+            for row in data:
+                ranks.append(row._asdict())
+            return ranks
+
+    # Update Previous Stock Information
+    def updateScores(self):
+        with self.db.connect() as connection:
+            data = connection.execute(sa.text("""
+                SELECT
+                    timestamp
+                FROM
+                    stocks
+                GROUP BY
+                    timestamp
+                ORDER BY
+                    timestamp DESC
+            """))
+            for row in data:
+                date = row[0]
+                print(date)
+                if date == None:
+                    continue
+                sentiment_score_data = connection.execute(sa.text("""
+                    SELECT
+                        ticker
+                    FROM
+                        stocks
+                    WHERE
+                        timestamp = :date
+                    ORDER BY
+                        sentiment DESC
+                    LIMIT
+                        30
+                """), {"date":date}).fetchall()
+                sentiment_scores = []
+                for row in sentiment_score_data:
+                    sentiment_scores.append(row[0])
+                count_score_data = connection.execute(sa.text("""
+                    SELECT
+                        ticker
+                    FROM
+                        stocks
+                    WHERE
+                        timestamp = :date
+                    ORDER BY
+                        count DESC
+                    LIMIT
+                        30
+                """), {"date":date}).fetchall()
+                count_scores = []
+                for row in count_score_data:
+                    count_scores.append(row[0])
+                for i in range(6):
+                    score = 6 - i
+                    try:
+                        connection.execute(sa.text(
+                            f"UPDATE ticker_follow SET sentiment_score = sentiment_score + {str(score)} WHERE ticker in {tuple(sentiment_scores[i*5:i*5+5])};"
+                        ))
+                        connection.execute(sa.text(
+                            f"UPDATE ticker_follow SET count_score = count_score + {str(score)} WHERE ticker in {tuple(count_scores[i*5:i*5+5])};"
+                        ))
+                    except Exception as e:
+                        print(f"Error updating sentiment_score: {e}")
+
+    # Fetch all the ranked lists
+    def fetchAllSI(self):
+        return {
+            "count": self.fetchTopCountSI(),
+            "sentiment": self.fetchTopSentimentSI(),
+            "follower": self.fetchTopFollowerSI(),
+            "sentimentScore": self.fetchTopSentimentScoreSI(),
+            "countScore": self.fetchTopCountScoreSI()
+            }
+
+    ###RUD###
 
     #Popular posts based on the popular subs. Grab 5 subs with most hits -> Grab the url with most hits of each.
     def populars(self, nsfw):
@@ -481,7 +723,6 @@ class RSTWorker:
             file.write(json.dumps(self.pastContent))
         with open("/home/ubuntu/var/www/rud.com/dcnt.json","w") as file:
             file.write(json.dumps(self.dailyContent))
-        print(self.pastContent)
 
 if __name__ == "__main__":
     RSTWorker()
